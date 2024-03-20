@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-
 /// THIS CLASS HOLDS THE APP'S PREDEFINED DIMENTIONS AND SPACING
-class AppDimention {
+class AppDimentions {
   /// ADDS A VERTICAL SPACE BY ADDING A SIZED BOX WITH HEIGHT
   static SizedBox verticalSpace([double? dimention]) =>
       SizedBox(height: dimention ?? k16);
@@ -10,6 +9,11 @@ class AppDimention {
   /// ADDS A VERTICAL SPACE BY ADDING A SIZED BOX WITH WIDTH
   static SizedBox horizontalSpace([double? dimention]) =>
       SizedBox(width: dimention ?? k16);
+
+  static double small = k10;
+  static double medium = k16;
+  static double large = k20;
+  static double extraLarge = k24;
 
   static double k10 = 10;
   static double k12 = 12;

@@ -7,4 +7,10 @@ abstract class Constants {
 
   /// TO BE USED FOR TESTS TO CHOOSE
   static const String routeAfterSplashScreen = OnboardingView.routeName;
+
+  /// STORAGE KEYS
+  static const String bearerToken = 'BEARER-TOKEN';
+
+  /// ENDPOINTS
+  static const String baseUrl = 'http://127.0.0.1:8000/api/';
 }
