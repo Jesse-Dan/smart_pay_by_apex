@@ -5,14 +5,14 @@ import 'package:go_navigator/go/go.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_pay_by_apex/src/views/auth/success_view.dart';
 
-import '../../../logic/logger/logger.dart';
-import '../../utils/app_dimentions.dart';
-import '../../utils/components/app_button.dart';
-import '../../utils/components/back_button.dart';
-import '../../utils/components/header_widget.dart';
-import '../../utils/components/numeric_keyboard.dart';
-import '../../utils/enums.dart';
-import '../../utils/style/app_colors.dart';
+import '../../../../logic/logger/logger.dart';
+import '../../../utils/app_dimentions.dart';
+import '../../../utils/components/app_button.dart';
+import '../../../utils/components/back_button.dart';
+import '../../../utils/components/header_widget.dart';
+import '../../../utils/components/numeric_keyboard.dart';
+import '../../../utils/enums.dart';
+import '../../../utils/style/app_colors.dart';
 
 class SetPincodeView extends StatefulWidget {
   static const String routeName = '/SetPincodeView';

@@ -8,7 +8,7 @@ mixin ClientUtils {
     String? bearerToken = LocalStorageService.getString(Constants.bearerToken);
 
     Map<String, String> headers = {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json'
     };
 

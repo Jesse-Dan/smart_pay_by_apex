@@ -1,12 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_navigator/go.dart';
 import 'package:smart_pay_by_apex/src/logic/handler/base_handler.dart';
-import 'package:smart_pay_by_apex/src/logic/handler/handlers/success_handler.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signin/signin_view.dart';
-import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/bloc/index.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_view.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_assets.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_dimentions.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/app_button.dart';
@@ -15,9 +18,13 @@ import 'package:smart_pay_by_apex/src/views/utils/enums.dart';
 import 'package:smart_pay_by_apex/src/views/utils/helpers/image_view_helper.dart';
 import 'package:smart_pay_by_apex/src/views/utils/style/app_colors.dart';
 
-import '../../utils/components/app_horizontal_divider.dart';
-import '../../utils/components/back_button.dart';
-import '../../utils/components/header_widget.dart';
+import '../../../../logic/handler/handlers/error_handler.dart';
+import '../../../../logic/handler/handlers/loading_handler.dart';
+import '../../../../logic/handler/handlers/success_handler.dart';
+import '../../../app/home/home.dart';
+import '../../../utils/components/app_horizontal_divider.dart';
+import '../../../utils/components/back_button.dart';
+import '../../../utils/components/header_widget.dart';
 
 class SignupView extends StatefulWidget {
   static const String routeName = '/SignupView';
@@ -29,6 +36,8 @@ class SignupView extends StatefulWidget {
 
 class _SignupViewState extends State<SignupView> {
   final emailCtl = TextEditingController();
+
+  final _authBloc = SendSignUpBloc(InitialSignUpState());
 
   bool showPassword = true;
 
@@ -80,7 +89,11 @@ class _SignupViewState extends State<SignupView> {
                 applyMargin: false,
                 btnText: 'Sign Up',
                 onTap: () {
-                  Go(context).to(routeName: VerifyView.routeName);
+                  Go(context).to(
+                      routeName: VerifyView.routeName,
+                      args: GoArgs(args: [
+                        {'email': emailCtl.text}
+                      ]));
                 },
               ),
               AppDimentions.verticalSpace(AppDimentions.large),
@@ -188,6 +201,7 @@ class _SignupViewState extends State<SignupView> {
           ),
         ),
       ),
+      // ),
     );
   }
 }

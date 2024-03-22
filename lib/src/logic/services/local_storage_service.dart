@@ -52,7 +52,7 @@ class LocalStorageService {
   // List<T> value
   static List<T> getList<T>(String key, {List<T> defaultValue = const []}) {
     Logger.log(tag: Tag.DEBUG, message: 'Getting list value for key: $key');
-    return box.read(key) ?? defaultValue;
+    return box.read<List<T>>(key) ?? defaultValue;
   }
 
   static Future<void> setList<T>(String key, List<T> value) async {

@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_navigator/go.dart';
 import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
-import 'package:smart_pay_by_apex/src/views/auth/signup/set_pincode_view.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/set_pin_view/set_pincode_view.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_assets.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_dimentions.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/app_button.dart';
@@ -16,8 +16,9 @@ import '../../../utils/components/back_button.dart';
 import '../../../utils/components/header_widget.dart';
 
 class AboutSelfView extends StatefulWidget {
+  final String email;
   static const String routeName = '/AboutSelfView';
-  const AboutSelfView({super.key});
+  const AboutSelfView({super.key, required this.email});
 
   @override
   State<AboutSelfView> createState() => _AboutSelfViewState();

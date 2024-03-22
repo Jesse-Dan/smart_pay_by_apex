@@ -10,13 +10,15 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InAppNotification(child:MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: Constants.appName,
-      theme:lightTheme ,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.light,
-      onGenerateRoute: (settings) => goNavigator(settings),
-    ),);
+    return InAppNotification(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: Constants.appName,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.light,
+        onGenerateRoute: (settings) => goNavigator(settings),
+      ),
+    );
   }
 }

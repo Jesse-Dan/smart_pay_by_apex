@@ -14,8 +14,10 @@ abstract class Constants {
 
   /// STORAGE KEYS
   static const String bearerToken = 'BEARER-TOKEN';
+  static const String secretHistory = 'SECRET-HISTORY';
+
 
   /// API VALUES
   /// [0] - BASE URL
-  static const String baseUrl = 'https://mobile-test-2d7e555a4f85.herokuapp.com/api/v1';
+  static const String baseUrl = 'https://mobile-test-2d7e555a4f85.herokuapp.com/api/v1/';
 }
