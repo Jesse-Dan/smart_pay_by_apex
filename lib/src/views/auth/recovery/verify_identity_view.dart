@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 import 'package:go_navigator/go.dart';
 import 'package:smart_pay_by_apex/src/views/auth/recovery/create_new_password.dart';
@@ -10,10 +12,14 @@ import '../../utils/components/header_widget.dart';
 import '../../utils/enums.dart';
 import '../../utils/helpers/image_view_helper.dart';
 import '../../utils/style/app_colors.dart';
+import '../signup/verify_view/get_token_bloc/index.dart';
+import '../signup/verify_view/model/get_token_payload.dart';
+import '../signup/verify_view/verify_view.dart';
 
 class VerifyIdentityView extends StatefulWidget {
+  final String email;
   static const String routeName = '/VerifyIdentityView';
-  const VerifyIdentityView({super.key});
+  const VerifyIdentityView({super.key, required this.email});
 
   @override
   State<VerifyIdentityView> createState() => _VerifyIdentityViewState();
@@ -97,7 +103,9 @@ class _VerifyIdentityViewState extends State<VerifyIdentityView> {
                                     color: AppColors.kgrey900),
                           ),
                           Text(
-                            'A*******@mail.com',
+                            widget.email == null
+                                ? ''
+                                : '${widget.email.split('')[0]} *****@${widget.email.split('@')[1].split('.')[0]}.com ',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
@@ -122,7 +130,18 @@ class _VerifyIdentityViewState extends State<VerifyIdentityView> {
                 applyMargin: true,
                 btnText: 'Continue',
                 onTap: () {
-                  Go(context).to(routeName: CreateNewPasswordView.routeName);
+                  /// Request  Token
+                  final _getTokenBloc = GetTokenBloc(InitialGetTokenState());
+
+                  _getTokenBloc.add(LoadGetTokenEvent(
+                      getTokenPayload: GetTokenPayload(email: widget.email)));
+
+                  /// Go to verify Screen
+                  Go(context).to(
+                      routeName: VerifyView.routeName,
+                      args: GoArgs(args: [
+                        {'email': widget.email}
+                      ]));
                 },
               ),
             ],

@@ -9,6 +9,8 @@ import 'package:go_navigator/go.dart';
 import 'package:smart_pay_by_apex/src/logic/handler/base_handler.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signin/signin_view.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/bloc/index.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bloc/index.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/get_token_payload.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_view.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_assets.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_dimentions.dart';
@@ -89,6 +91,13 @@ class _SignupViewState extends State<SignupView> {
                 applyMargin: false,
                 btnText: 'Sign Up',
                 onTap: () {
+                  /// Request  Token
+                  final _getTokenBloc = GetTokenBloc(InitialGetTokenState());
+
+                  _getTokenBloc.add(LoadGetTokenEvent(
+                      getTokenPayload: GetTokenPayload(email: emailCtl.text)));
+
+                  /// Go to verify Screen
                   Go(context).to(
                       routeName: VerifyView.routeName,
                       args: GoArgs(args: [

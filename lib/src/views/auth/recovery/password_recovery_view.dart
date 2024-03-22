@@ -54,7 +54,11 @@ class _PasswordRecoveryViewState extends State<PasswordRecoveryView> {
                 applyMargin: false,
                 btnText: 'Send me email',
                 onTap: () {
-                  Go(context).to(routeName: VerifyIdentityView.routeName);
+                  Go(context).to(
+                      routeName: VerifyIdentityView.routeName,
+                      args: GoArgs(args: [
+                        {'email': emailCtl.text}
+                      ]));
                 },
               ),
             ],

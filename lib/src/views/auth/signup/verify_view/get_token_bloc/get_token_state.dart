@@ -10,8 +10,8 @@ abstract class GetTokenState extends Equatable {
 }
 
 /// UnInitialized
-class UnGetTokenState extends GetTokenState {
-  UnGetTokenState();
+class InitialGetTokenState extends GetTokenState {
+  InitialGetTokenState();
 
   @override
   String toString() => 'UnGetTokenState';

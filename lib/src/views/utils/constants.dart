@@ -1,4 +1,5 @@
 import 'package:smart_pay_by_apex/src/views/auth/signin/signin_view.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/signup_view.dart';
 
 /// HOLDS DATA THAT IS CONSTANT THROUGH OUT THE APP
 abstract class Constants {
@@ -9,8 +10,10 @@ abstract class Constants {
   /// CONFIG
   static const Duration splashScreenDuration = Duration(seconds: 3);
 
+  static const Duration notifierDuration = Duration(seconds: 40);
+
   /// TO BE USED FOR TESTS TO CHOOSE
-  static const String routeAfterSplashScreen = SigninView.routeName;
+  static const String routeAfterSplashScreen = SignupView.routeName;
 
   /// STORAGE KEYS
   static const String bearerToken = 'BEARER-TOKEN';

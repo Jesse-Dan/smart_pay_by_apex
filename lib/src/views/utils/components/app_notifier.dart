@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_notification/in_app_notification.dart';
+import 'package:smart_pay_by_apex/src/views/utils/constants.dart';
 
 import '../../../logic/logger/logger.dart';
 import '../app_dimentions.dart';
 import '../enums.dart';
 import '../style/app_colors.dart';
+
 class AppNotifier {
   static notify(context,
           {required AppNotifierType appNotifierType,
@@ -14,7 +16,7 @@ class AppNotifier {
         dismissCurve: Curves.easeInOutBack,
         duration: const Duration(seconds: 2),
         child: Container(
-          margin:  EdgeInsets.symmetric(horizontal: AppDimentions.medium),
+          margin: EdgeInsets.symmetric(horizontal: AppDimentions.medium),
           decoration: ShapeDecoration(
             color: appNotifierType == AppNotifierType.SUCCESS
                 ? AppColors.ksecondary
@@ -48,7 +50,7 @@ class AppNotifier {
                 width: 202,
                 child: Text(
                   message,
-                  style:  TextStyle(
+                  style: TextStyle(
                     color: AppColors.ksecondary,
                     fontSize: 16,
                     fontFamily: 'DM Sans',
@@ -70,10 +72,11 @@ class AppNotifier {
   }) {
     return InAppNotification.show(
       dismissCurve: Curves.easeInOutBack,
-      duration: const Duration(seconds: 2),
+      duration: Constants.notifierDuration,
       child: _buildNotifier(message),
       context: context,
-      onTap: () => Logger(tag: Tag.SERVICE_ACTION, message: 'User Tapped Notifier'),
+      onTap: () =>
+          Logger(tag: Tag.SERVICE_ACTION, message: 'User Tapped Notifier'),
     );
   }
 
@@ -90,7 +93,7 @@ class AppNotifier {
           borderRadius: BorderRadius.circular(16),
         ),
       ),
-      duration: const Duration(seconds: 3),
+      duration: Constants.notifierDuration,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,

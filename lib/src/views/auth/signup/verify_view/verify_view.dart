@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_navigator/go.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bloc/index.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_bloc/index.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_bloc/verify_bloc.dart';
+import 'package:smart_pay_by_apex/src/views/utils/components/app_notifier.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/numeric_keyboard.dart';
 
 import '../../../../logic/handler/handlers/error_handler.dart';
@@ -67,34 +69,59 @@ class _VerifyViewState extends State<VerifyView> {
   }
 
   final _authBloc = VerifyBloc(InitialVerifyState());
+  final _getTokenBloc = GetTokenBloc(InitialGetTokenState());
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<VerifyBloc, VerifyState>(
-      bloc: _authBloc,
-      listener: (context, state) {
-        if (state is LoadingVerifyState) {
-          LoadingHandler(context: context);
-        }
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<VerifyBloc, VerifyState>(
+          bloc: _authBloc,
+          listener: (context, state) {
+            if (state is LoadingVerifyState) {
+              LoadingHandler(context: context);
+            }
 
-        if (state is VerifyLoadedVerifyState) {
-          Go(context).pop();
-          SuccessHandler(
-              context: context,
-              message: 'Registration Sucessful',
-              handlerBtnCount: HandlerBtnCount.one,
-              callBackTextOne: 'Proceed');
-        }
+            if (state is VerifyLoadedVerifyState) {
+              Go(context).pop();
+              SuccessHandler(
+                  context: context,
+                  message: 'Registration Sucessful',
+                  handlerBtnCount: HandlerBtnCount.one,
+                  callBackTextOne: 'Proceed',
+                  callBack: () {
+                    Go(context).to(routeName: AboutSelfView.routeName);
+                  });
+            }
 
-        if (state is ErrorVerifyState) {
-          Go(context).pop();
-          ErrorHandler(
-              context: context,
-              message: state.errorMessage,
-              handlerBtnCount: HandlerBtnCount.one,
-              callBackTextOne: 'Okay');
-        }
-      },
+            if (state is ErrorVerifyState) {
+              Go(context).pop();
+              ErrorHandler(
+                  context: context,
+                  message: state.errorMessage,
+                  handlerBtnCount: HandlerBtnCount.one,
+                  callBackTextOne: 'Okay');
+            }
+          },
+        ),
+        BlocListener<GetTokenBloc, GetTokenState>(
+          bloc: _getTokenBloc,
+          listener: (context, state) {
+            if (state is LoadedGetTokenState) {
+              AppNotifier.notifyAction(context,
+                  message: 'Token: ${state.getTokenResponse.data!.token!}');
+            }
+
+            if (state is ErrorGetTokenState) {
+              ErrorHandler(
+                  context: context,
+                  message: state.errorMessage,
+                  handlerBtnCount: HandlerBtnCount.one,
+                  callBackTextOne: 'Okay');
+            }
+          },
+        )
+      ],
       child: Scaffold(
         backgroundColor: AppColors.white,
         bottomSheet: LayoutBuilder(builder: (context, constraints) {
@@ -109,7 +136,7 @@ class _VerifyViewState extends State<VerifyView> {
               enableBiometric: true,
               iconBiometricColor: Colors.blue[400],
               onChange: (pin) {
-                Logger.log(tag: Tag.DEBUG, message: 'PIN: $pin');
+                Logger.log(tag: Tag.DEBUG, message: 'PIN: //');
                 setState(() {
                   pinInputController.text = pinInputController.text + pin;
                 });
@@ -150,7 +177,8 @@ class _VerifyViewState extends State<VerifyView> {
                           children: [
                             const TextSpan(text: 'We send a code to ('),
                             TextSpan(
-                              text: ' *****@mail.com ',
+                              text:
+                                  ' *****@${widget.email?.split('@')[1].split('.')[0]}.com ',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -205,9 +233,7 @@ class _VerifyViewState extends State<VerifyView> {
                       flex: true,
                       applyMargin: true,
                       btnText: 'Continue',
-                      onTap: () {
-                        Go(context).to(routeName: AboutSelfView.routeName);
-                      },
+                      onTap: () {},
                     ),
                   ],
                 ),

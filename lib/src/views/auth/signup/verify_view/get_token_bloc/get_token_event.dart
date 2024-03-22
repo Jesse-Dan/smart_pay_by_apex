@@ -21,7 +21,7 @@ class UnGetTokenEvent extends GetTokenEvent {
   @override
   Stream<GetTokenState> applyAsync(
       {GetTokenState? currentState, GetTokenBloc? bloc}) async* {
-    yield UnGetTokenState();
+    yield InitialGetTokenState();
   }
 }
 
@@ -35,8 +35,8 @@ class LoadGetTokenEvent extends GetTokenEvent {
       {GetTokenState? currentState, GetTokenBloc? bloc}) async* {
     try {
       yield LoadingGetTokenState();
-      var res = await AuthRepository()
-          .getToken(getTokenPayload: getTokenPayload);
+      var res =
+          await AuthRepository().getToken(getTokenPayload: getTokenPayload);
       Logger.log(tag: Tag.DEBUG, message: res.$1.toString());
       if (res.$1?['message'] == 'success') {
         var val = GetTokenResponse.fromJson(res.$1!);

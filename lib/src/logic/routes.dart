@@ -25,7 +25,7 @@ MaterialPageRoute<void> goNavigator(settings) => GoNavigator(
         PasswordRecoveryView.routeName: (context, args) =>
             const PasswordRecoveryView(),
         VerifyIdentityView.routeName: (context, args) =>
-            const VerifyIdentityView(),
+            VerifyIdentityView(email: args?.args[0]['email']),
         CreateNewPasswordView.routeName: (context, args) =>
             const CreateNewPasswordView(),
         SigninView.routeName: (context, args) => const SigninView(),
