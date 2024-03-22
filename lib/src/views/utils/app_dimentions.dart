@@ -1,14 +1,21 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 /// THIS CLASS HOLDS THE APP'S PREDEFINED DIMENTIONS AND SPACING
 class AppDimentions {
-  /// ADDS A VERTICAL SPACE BY ADDING A SIZED BOX WITH HEIGHT
+  /// ADDS A VERTICAL SPACE BY ADDING A SIZED BOX WITH HEIGHT [16]
   static SizedBox verticalSpace([double? dimention]) =>
       SizedBox(height: dimention ?? k16);
 
-  /// ADDS A VERTICAL SPACE BY ADDING A SIZED BOX WITH WIDTH
+  /// ADDS A VERTICAL SPACE BY ADDING A SIZED BOX WITH WIDTH [16]
   static SizedBox horizontalSpace([double? dimention]) =>
       SizedBox(width: dimention ?? k16);
+
+  /// XYSpacer creates an adjustable, empty spacer that can be used to tune the spacing between widgets in a [Flex] container, like [Row] or [Column].
+  static Spacer XYSpace([int flex = 1]) => Spacer(
+        flex: flex,
+      );
 
   static double small = k10;
   static double medium = k16;

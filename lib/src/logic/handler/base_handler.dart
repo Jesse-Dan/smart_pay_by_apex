@@ -1,8 +1,8 @@
 /// ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
-import '../../views/components/app_custom_loader.dart';
-import '../../views/components/app_dialogue.dart';
+import '../../views/utils/components/app_custom_loader.dart';
+import '../../views/utils/components/app_dialogue.dart';
 import '../../views/utils/enums.dart';
 import '../logger/logger.dart';
 

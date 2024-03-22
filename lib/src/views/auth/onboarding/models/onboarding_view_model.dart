@@ -12,7 +12,7 @@ class OnboardingViewModel {
       required this.title,
       required this.description});
 
-  List<OnboardingViewModel> onboardingViewModel = [
+  static List<OnboardingViewModel> onboardingViewModel = [
     OnboardingViewModel(
         devicePath: AppAsset.device1,
         illustrationPath: AppAsset.illustration1,

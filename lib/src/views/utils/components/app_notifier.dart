@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 
-import '../../logic/logger/logger.dart';
-import '../utils/app_dimentions.dart';
-import '../utils/enums.dart';
-import '../utils/style/app_colors.dart';
+import '../../../logic/logger/logger.dart';
+import '../app_dimentions.dart';
+import '../enums.dart';
+import '../style/app_colors.dart';
 class AppNotifier {
   static notify(context,
           {required AppNotifierType appNotifierType,

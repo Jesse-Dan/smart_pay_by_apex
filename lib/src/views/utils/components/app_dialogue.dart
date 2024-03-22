@@ -1,10 +1,8 @@
 // ignore_for_file: unused_element
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../utils/enums.dart';
-import '../utils/style/app_colors.dart';
-
+import '../enums.dart';
+import '../style/app_colors.dart';
 
 class AppDialogue extends StatelessWidget {
   const AppDialogue(
@@ -53,7 +51,6 @@ class AppDialogue extends StatelessWidget {
     List<Widget>? actions = _getActions(context);
 
     return AlertDialog.adaptive(
-      surfaceTintColor: Colors.white,
       actionsAlignment: MainAxisAlignment.center,
       insetPadding: const EdgeInsets.only(left: 50, right: 50),
       buttonPadding: const EdgeInsets.symmetric(
@@ -65,7 +62,7 @@ class AppDialogue extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(16.0))),
       titlePadding: const EdgeInsets.symmetric(vertical: 16),
       contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       title: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
@@ -73,7 +70,7 @@ class AppDialogue extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .titleLarge
-              ?.copyWith(color: Colors.white),
+              ?.copyWith(color: AppColors.kprimaryColor),
           textAlign: TextAlign.center,
         ),
       ),
@@ -81,8 +78,8 @@ class AppDialogue extends StatelessWidget {
           Text(
             message ?? '',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Color(0xFF464646),
+            style: TextStyle(
+              color: AppColors.kprimaryColor,
               fontSize: 16,
               fontFamily: 'DM Sans',
               fontWeight: FontWeight.w400,
@@ -118,18 +115,18 @@ class AppDialogue extends StatelessWidget {
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              color: AppColors.kprimary.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(1),
+              color: AppColors.kprimaryColor),
           height: 42,
           width: 115,
           child: Center(
             child: Text(
               btnText,
-              style: GoogleFonts.dmSans(
-                color: textColor ?? AppColors.kprimary.withOpacity(0.9),
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: textColor ?? AppColors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
             ),
           ),
         ),

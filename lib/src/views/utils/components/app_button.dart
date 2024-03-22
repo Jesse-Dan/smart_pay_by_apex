@@ -1,8 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
+
 import 'package:flutter/material.dart';
 
-import '../utils/enums.dart';
-import '../utils/style/app_colors.dart';
+import '../enums.dart';
+import '../style/app_colors.dart';
 import 'app_custom_loader.dart';
 
 class AppButton extends StatelessWidget {
@@ -20,7 +21,7 @@ class AppButton extends StatelessWidget {
       this.addBorder,
       this.onLongPress,
       this.btnTextColor,
-      this.applyInternalPadding,
+      this.applyMargin,
       this.width = 100,
       this.height = 48,
       this.boxShadow,
@@ -55,7 +56,7 @@ class AppButton extends StatelessWidget {
   final TextStyle? btnTxtFontStyle;
   final double? btnTxtFontSize;
   final bool? addBorder;
-  final bool? applyInternalPadding;
+  final bool? applyMargin;
   final double? width;
   final double height;
   final List<BoxShadow>? boxShadow;
@@ -73,12 +74,12 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return flex
         ? Flexible(
-            child: _build(),
+            child: _build(context),
           )
-        : _build();
+        : _build(context);
   }
 
-  InkWell _build() {
+  InkWell _build(context) {
     return InkWell(
       onDoubleTap: disabled
           ? null
@@ -96,7 +97,7 @@ class AppButton extends StatelessWidget {
               ? null
               : onLongPress,
       child: Container(
-        margin: (applyInternalPadding ?? false)
+        margin: (applyMargin ?? false)
             ? const EdgeInsets.all(5)
             : const EdgeInsets.all(0),
         height: 56,
@@ -107,10 +108,10 @@ class AppButton extends StatelessWidget {
           border: addBorder ?? false
               ? Border.all(color: borderColor ?? Colors.white)
               : null,
-          borderRadius: BorderRadius.circular(borderRadius ?? 2),
+          borderRadius: BorderRadius.circular(borderRadius ?? 16),
           color: disabled
-              ? AppColors.kprimary
-              : btnColor ?? AppColors.kpeachGreenColor,
+              ? AppColors.kgrey200
+              : btnColor ?? AppColors.kprimaryColor,
           boxShadow: !addboxShadow
               ? null
               : boxShadow ??
@@ -130,13 +131,13 @@ class AppButton extends StatelessWidget {
           alignment: Alignment.center,
           child: btnContentType == BtnContentType.IMG
               ? btnContent
-              : _loaderByText(),
+              : _loaderByText(context),
         ),
       ),
     );
   }
 
-  Widget _loaderByText() {
+  Widget _loaderByText(context) {
     return loading
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -145,23 +146,22 @@ class AppButton extends StatelessWidget {
             children: [
               AppLoadingIndicator(color: Colors.transparent),
               const SizedBox(width: 5),
-              _text(text: '$loadingText...'),
+              _text(text: '$loadingText...', context: context),
             ],
           )
-        : _text();
+        : _text(context: context);
   }
 
-  Text _text({text}) {
+  Text _text({text, context}) {
     return Text(
       loading ? text : btnText ?? '',
       style: btnTxtFontStyle ??
-          TextStyle(
-            fontFamily: 'Satoshi',
-            color: btnTextColor ?? Colors.white,
-            fontSize: btnTxtFontSize ?? 14,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.36,
-          ),
+          Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.20000000298023224,
+                color: btnTextColor ?? Colors.white,
+              ),
       textAlign: btntTextAlign ?? TextAlign.start,
     );
   }
