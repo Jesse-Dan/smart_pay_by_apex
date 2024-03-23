@@ -11,6 +11,7 @@ import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/model/signup
 import 'package:smart_pay_by_apex/src/views/utils/constants.dart';
 import 'package:smart_pay_by_apex/src/views/utils/enums.dart';
 
+import '../../../../utils/helpers/get_error_from_array_helper.dart';
 import 'index.dart';
 
 @immutable
@@ -23,7 +24,7 @@ class UnAuthEvent extends SignUpEvent {
   @override
   Stream<SignUpState> applyAsync(
       {SignUpState? currentState, SendSignUpBloc? bloc}) async* {
-    yield InitialSignUpState();
+    yield const InitialSignUpState();
   }
 }
 
@@ -35,15 +36,22 @@ class SendSignUpEvent extends SignUpEvent {
   Stream<SignUpState> applyAsync(
       {SignUpState? currentState, SendSignUpBloc? bloc}) async* {
     try {
-      yield LoadingSignUpState();
+      yield const LoadingSignUpState();
       var res = await AuthRepository().signup(signUpPayload: signUpPayload);
       Logger.log(tag: Tag.DEBUG, message: res.$1.toString());
       if (res.$1?['message'] == 'success') {
         var val = SignUpResponse.fromJson(res.$1!);
         LocalStorageService.setString(Constants.bearerToken, val.data!.token!);
+        
+        User.setPresentUser(val.data!.user!);
+          Logger.log(
+            tag: Tag.DEBUG,
+            message:
+                'User Logged at LoginEvent: ${User.getPresentUser()!.email!}');
         yield SignUpLoadedSignUpState(val);
       } else {
-        yield ErrorSignUpState(res.$3.toString());
+        var message = getFirstNonNullItem(res.$1?['errors']!);
+        yield ErrorSignUpState(message);
       }
     } catch (_, stackTrace) {
       developer.log('$_',

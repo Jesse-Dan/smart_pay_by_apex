@@ -4,29 +4,39 @@
 
 import 'dart:convert';
 
-GetTokenPayload getTokenPayloadFromJson(String str) => GetTokenPayload.fromJson(json.decode(str));
+import 'package:flutter/material.dart';
 
-String getTokenPayloadToJson(GetTokenPayload data) => json.encode(data.toJson());
+GetTokenPayload getTokenPayloadFromJson(String str) =>
+    GetTokenPayload.fromJson(json.decode(str));
+
+String getTokenPayloadToJson(GetTokenPayload data) =>
+    json.encode(data.toJson());
 
 class GetTokenPayload {
-    String? email;
+  String? email;
+  BuildContext context;
 
-    GetTokenPayload({
-        this.email,
-    });
+  GetTokenPayload({
+    this.email,
+    required this.context,
+  });
 
-    GetTokenPayload copyWith({
-        String? email,
-    }) => 
-        GetTokenPayload(
-            email: email ?? this.email,
-        );
+  GetTokenPayload copyWith({
+    String? email,
+  }) =>
+      GetTokenPayload(
+        email: email ?? this.email,
+        context: context ?? context,
+      );
 
-    factory GetTokenPayload.fromJson(Map<String, dynamic> json) => GetTokenPayload(
+  factory GetTokenPayload.fromJson(Map<String, dynamic> json) =>
+      GetTokenPayload(
         email: json["email"],
-    );
+        context: json["context"],
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "email": email,
-    };
+        "context": context,
+      };
 }

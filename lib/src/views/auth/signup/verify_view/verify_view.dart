@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_navigator/go.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bloc/index.dart';
@@ -12,20 +11,19 @@ import 'package:smart_pay_by_apex/src/views/utils/components/app_notifier.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/numeric_keyboard.dart';
 
 import '../../../../logic/handler/handlers/error_handler.dart';
-import '../../../../logic/handler/handlers/loading_handler.dart';
-import '../../../../logic/handler/handlers/success_handler.dart';
 import '../../../utils/app_dimentions.dart';
 import '../../../utils/components/app_button.dart';
 import '../../../utils/components/back_button.dart';
 import '../../../utils/components/header_widget.dart';
 import '../../../utils/enums.dart';
 import '../../../utils/style/app_colors.dart';
-import '../about_self_view/about_self_view.dart';
+import 'model/get_token_payload.dart';
 
 class VerifyView extends StatefulWidget {
   final String? email;
+  final String route;
   static const String routeName = '/VerifyView';
-  const VerifyView({super.key, required this.email});
+  const VerifyView({super.key, required this.email, required this.route});
 
   @override
   State<VerifyView> createState() => _VerifyViewState();
@@ -41,12 +39,15 @@ class _VerifyViewState extends State<VerifyView> {
   late Timer _timer;
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timerCount > 0) {
         setState(() {
           _timerCount--;
         });
       } else {
+        setState(() {
+          _timerCount = 30;
+        });
         timer.cancel();
       }
     });
@@ -89,66 +90,44 @@ class _VerifyViewState extends State<VerifyView> {
         border: Border.all(color: AppColors.alertError),
       ),
     );
+
     super.initState();
   }
 
-  final _verifyBloc = VerifyBloc(InitialVerifyState());
-  final _getTokenBloc = GetTokenBloc(InitialGetTokenState());
+  final _verifyBloc = VerifyBloc(const InitialVerifyState());
+  final _getTokenBloc = GetTokenBloc(const InitialGetTokenState());
 
   String? pinErrorText;
-  String? token;
+  String? token = '33332';
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<VerifyBloc, VerifyState>(
-          bloc: _verifyBloc,
-          listener: (context, state) {
-            if (state is LoadingVerifyState) {
-              LoadingHandler(context: context);
-            }
+    return BlocListener<GetTokenBloc, GetTokenState>(
+      bloc: _getTokenBloc,
+      listener: (context, state) {
+        Logger.log(tag: Tag.DEBUG, message: 'Listener Says: $state');
 
-            if (state is VerifyLoadedVerifyState) {
-              Go(context).pop();
-              SuccessHandler(
-                  context: context,
-                  message: 'Registration Sucessful',
-                  handlerBtnCount: HandlerBtnCount.one,
-                  callBackTextOne: 'Proceed',
-                  callBack: () {
-                    Go(context).to(routeName: AboutSelfView.routeName);
-                  });
-            }
+        if (state is LoadedGetTokenState) {
+          Logger.log(
+              tag: Tag.DEBUG,
+              message: 'Listener Says: ${state.getTokenResponse.data!.token!}');
+          AppNotifier.notifyAction(context,
+              message: 'Token: ${state.getTokenResponse.data!.token!}');
+          ErrorHandler(
+              context: context,
+              message: state.getTokenResponse.data!.token!,
+              handlerBtnCount: HandlerBtnCount.one,
+              callBackTextOne: 'Okay');
+        }
 
-            if (state is ErrorVerifyState) {
-              Go(context).pop();
-              ErrorHandler(
-                  context: context,
-                  message: state.errorMessage,
-                  handlerBtnCount: HandlerBtnCount.one,
-                  callBackTextOne: 'Okay');
-            }
-          },
-        ),
-        BlocListener<GetTokenBloc, GetTokenState>(
-          bloc: _getTokenBloc,
-          listener: (context, state) {
-            if (state is LoadedGetTokenState) {
-              AppNotifier.notifyAction(context,
-                  message: 'Token: ${state.getTokenResponse.data!.token!}');
-            }
-
-            if (state is ErrorGetTokenState) {
-              ErrorHandler(
-                  context: context,
-                  message: state.errorMessage,
-                  handlerBtnCount: HandlerBtnCount.one,
-                  callBackTextOne: 'Okay');
-            }
-          },
-        )
-      ],
+        if (state is ErrorGetTokenState) {
+          ErrorHandler(
+              context: context,
+              message: state.errorMessage,
+              handlerBtnCount: HandlerBtnCount.one,
+              callBackTextOne: 'Okay');
+        }
+      },
       child: Scaffold(
         backgroundColor: AppColors.white,
         bottomSheet: LayoutBuilder(builder: (context, constraints) {
@@ -241,18 +220,33 @@ class _VerifyViewState extends State<VerifyView> {
                     ),
                     AppDimentions.verticalSpace(AppDimentions.k20),
                     Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Resend Code in $_timerCount ${_timerCount <= 1 ? 'sec' : 'secs'} ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.20000000298023224,
-                                  color: AppColors.kgrey900),
-                        )),
+                      alignment: Alignment.center,
+                      child: TextButton(
+                          onPressed: () {
+                            _timer.cancel();
+                            _timerCount = 30;
+                            _startTimer();
+
+                            /// Request  Token
+                            final getTokenBloc =
+                                GetTokenBloc(const InitialGetTokenState());
+
+                            getTokenBloc.add(LoadGetTokenEvent(
+                                getTokenPayload: GetTokenPayload(
+                                    email: widget.email, context: context)));
+                          },
+                          child: Text(
+                            'Resend Code in $_timerCount ${_timerCount <= 1 ? 'sec' : 'secs'} ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.20000000298023224,
+                                    color: AppColors.kgrey500),
+                          )),
+                    ),
                     AppDimentions.verticalSpace(AppDimentions.k20),
                     AppButton(
                       buttonType: ButtonType.LONG_BTN,
@@ -261,7 +255,8 @@ class _VerifyViewState extends State<VerifyView> {
                       btnText: 'Continue',
                       onTap: () {
                         _verifyBloc.add(SendVerifyEvent(VerifyTokenPayload(
-                            email: widget.email, token: token)));
+                            email: widget.email,
+                            token: pinInputController.text)));
                       },
                     ),
                   ],

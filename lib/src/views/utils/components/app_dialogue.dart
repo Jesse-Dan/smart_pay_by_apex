@@ -6,7 +6,7 @@ import '../style/app_colors.dart';
 
 class AppDialogue extends StatelessWidget {
   const AppDialogue(
-      {Key? key,
+      {super.key,
       this.tag = Tag.LOADING,
       this.message,
       this.btnText = '',
@@ -19,8 +19,7 @@ class AppDialogue extends StatelessWidget {
       this.child,
       this.titleColor,
       this.callBackTextTwoColor,
-      this.callBackTextOneColor})
-      : super(key: key);
+      this.callBackTextOneColor});
   final Tag tag;
   final String? message;
   final String? title;

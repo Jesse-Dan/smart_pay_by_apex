@@ -12,6 +12,7 @@ import 'package:smart_pay_by_apex/src/views/auth/success_view.dart';
 
 import '../views/app/secret_history_view.dart';
 import '../views/auth/onboarding/onboarding_view.dart';
+import '../views/auth/signin/sign_in_with_pin.dart';
 import '../views/auth/signup/verify_view/verify_view.dart';
 import '../views/auth/splash_screen_vew.dart';
 
@@ -30,14 +31,23 @@ MaterialPageRoute<void> goNavigator(settings) => GoNavigator(
             const CreateNewPasswordView(),
         SigninView.routeName: (context, args) => const SigninView(),
         SignupView.routeName: (context, args) => const SignupView(),
-        VerifyView.routeName: (context, args) =>
-            VerifyView(email: args?.args[0]['email']),
+        VerifyView.routeName: (context, args) => VerifyView(
+              email: args?.args[0]['email'],
+              route: args?.args[0]['route'],
+            ),
         AboutSelfView.routeName: (context, args) =>
             AboutSelfView(email: args?.args[0]['email']),
-        SetPincodeView.routeName: (context, args) => const SetPincodeView(),
-        SuccessView.routeName: (context, args) => const SuccessView(),
-        HomeView.routeName: (context, args) => HomeView(),
+        SetPincodeView.routeName: (context, args) => SetPincodeView(
+              name: args?.args[0]['name'],
+              email: args?.args[0]['email'],
+            ),
+        SuccessView.routeName: (context, args) => SuccessView(
+              name: args?.args[0]['name'],
+            ),
+        HomeView.routeName: (context, args) => const HomeView(),
         SecretHistoryView.routeName: (context, args) =>
             const SecretHistoryView(),
+        SignInWithPincodeView.routeName: (context, args) =>
+            const SignInWithPincodeView(),
       },
     ).generateRoute(settings);

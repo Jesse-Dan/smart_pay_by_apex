@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
 
 import 'dart:async';
 
@@ -43,9 +43,11 @@ class _SigninViewState extends State<SigninView> {
   final passwordCtl = TextEditingController();
 
   bool showPassword = true;
+  
 
   @override
   Widget build(BuildContext context) {
+    
     return BlocListener<SignInBloc, SignInState>(
       bloc: _authBloc,
       listener: (context, state) {
@@ -58,7 +60,8 @@ class _SigninViewState extends State<SigninView> {
           SuccessHandler(context: context, message: 'Login Sucessful');
           Timer(const Duration(seconds: 2), () {
             Go(context).pop();
-            Go(context).to(routeName: HomeView.routeName);
+            Go(context)
+                .toAndReplaceAllNamedRoute(routeName: HomeView.routeName);
           });
         }
 
@@ -105,7 +108,7 @@ class _SigninViewState extends State<SigninView> {
                     },
                     fieldTextStyle: Theme.of(context)
                         .textTheme
-                        .subtitle1!
+                        .titleMedium!
                         .copyWith(
                             color: AppColors.kprimaryColor,
                             fontSize: passwordCtl.text.isEmpty ? 14 : 25,

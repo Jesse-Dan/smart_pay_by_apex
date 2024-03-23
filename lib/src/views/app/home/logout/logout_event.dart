@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:async';
 import 'dart:developer' as developer;
 
@@ -18,7 +20,7 @@ class UnLogoutEvent extends LogoutEvent {
   @override
   Stream<LogoutState> applyAsync(
       {LogoutState? currentState, LogoutBloc? bloc}) async* {
-    yield UnLogoutState();
+    yield const UnLogoutState();
   }
 }
 
@@ -27,7 +29,7 @@ class LoadLogoutEvent extends LogoutEvent {
   Stream<LogoutState> applyAsync(
       {LogoutState? currentState, LogoutBloc? bloc}) async* {
     try {
-      yield UnLogoutState();
+      yield const UnLogoutState();
       var res = await AuthRepository().logout();
       Logger.log(tag: Tag.DEBUG, message: res.$1.toString());
       if (res.$1?['message'] == 'success') {

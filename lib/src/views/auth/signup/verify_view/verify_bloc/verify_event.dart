@@ -3,14 +3,10 @@ import 'dart:developer' as developer;
 
 import 'package:meta/meta.dart';
 import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
-import 'package:smart_pay_by_apex/src/logic/services/local_storage_service.dart';
 import 'package:smart_pay_by_apex/src/repositories/auth_repository.dart';
-import 'package:smart_pay_by_apex/src/views/auth/models/auth_response.dart';
-import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/model/signup_payload.dart';
-import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/model/signup_response.dart';
-import 'package:smart_pay_by_apex/src/views/utils/constants.dart';
 import 'package:smart_pay_by_apex/src/views/utils/enums.dart';
 
+import '../../../../utils/helpers/get_error_from_array_helper.dart';
 import '../model/verify_token_payload.dart';
 import '../model/verify_token_response.dart';
 import 'index.dart';
@@ -24,7 +20,7 @@ class UnAuthEvent extends VerifyEvent {
   @override
   Stream<VerifyState> applyAsync(
       {VerifyState? currentState, VerifyBloc? bloc}) async* {
-    yield InitialVerifyState();
+    yield const InitialVerifyState();
   }
 }
 
@@ -37,7 +33,7 @@ class SendVerifyEvent extends VerifyEvent {
   Stream<VerifyState> applyAsync(
       {VerifyState? currentState, VerifyBloc? bloc}) async* {
     try {
-      yield LoadingVerifyState();
+      yield const LoadingVerifyState();
       var res =
           await AuthRepository().verifyToken(verifyTokenPayload: verifyTokenPayload);
       Logger.log(tag: Tag.DEBUG, message: res.$1.toString());
@@ -46,7 +42,8 @@ class SendVerifyEvent extends VerifyEvent {
        
         yield VerifyLoadedVerifyState(val);
       } else {
-        yield ErrorVerifyState(res.$3.toString());
+         var message = getFirstNonNullItem(res.$1?['errors']!);
+        yield ErrorVerifyState(message);
       }
     } catch (_, stackTrace) {
       developer.log('$_',

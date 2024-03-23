@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:smart_pay_by_apex/src/views/auth/models/auth_response.dart';
 
 import '../model/signup_response.dart';
 
 abstract class SignUpState extends Equatable {
-  SignUpState();
+  const SignUpState();
 
   @override
   List<Object> get props => [];
@@ -12,7 +11,7 @@ abstract class SignUpState extends Equatable {
 
 /// LoadingSignUpState
 class LoadingSignUpState extends SignUpState {
-  LoadingSignUpState();
+  const LoadingSignUpState();
 
   @override
   String toString() => 'LoadingSignUpState';
@@ -20,7 +19,7 @@ class LoadingSignUpState extends SignUpState {
 
 /// InitialSignUpState
 class InitialSignUpState extends SignUpState {
-  InitialSignUpState();
+  const InitialSignUpState();
 
   @override
   String toString() => 'UnSignUpState';
@@ -28,7 +27,7 @@ class InitialSignUpState extends SignUpState {
 
 /// Initialized
 class SignUpLoadedSignUpState extends SignUpState {
-  SignUpLoadedSignUpState(this.signUpResponse);
+  const SignUpLoadedSignUpState(this.signUpResponse);
 
   final SignUpResponse signUpResponse;
 
@@ -40,7 +39,7 @@ class SignUpLoadedSignUpState extends SignUpState {
 }
 
 class ErrorSignUpState extends SignUpState {
-  ErrorSignUpState(this.errorMessage);
+  const ErrorSignUpState(this.errorMessage);
 
   final String errorMessage;
 

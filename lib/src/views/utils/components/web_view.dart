@@ -10,8 +10,7 @@ class AppWebView extends StatefulWidget {
   final String url;
   final String title;
 
-  const AppWebView({Key? key, required this.url, required this.title})
-      : super(key: key);
+  const AppWebView({super.key, required this.url, required this.title});
 
   @override
   State<AppWebView> createState() => _AppWebViewState();

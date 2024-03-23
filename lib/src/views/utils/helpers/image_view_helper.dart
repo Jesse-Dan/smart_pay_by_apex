@@ -7,14 +7,14 @@ import '../enums.dart';
 
 class ImageViewer extends StatelessWidget {
   const ImageViewer({
-    Key? key,
+    super.key,
     required this.imagePath,
     this.width,
     this.height,
     this.color,
     this.fit = BoxFit.cover,
     this.resizeMode = ImageResizeMode.cover,
-  }) : super(key: key);
+  });
 
   final String imagePath;
   final double? width;

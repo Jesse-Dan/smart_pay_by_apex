@@ -1,14 +1,19 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_navigator/go.dart';
 import 'package:smart_pay_by_apex/src/logic/handler/handlers/error_handler.dart';
 import 'package:smart_pay_by_apex/src/logic/handler/handlers/loading_handler.dart';
+import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
 import 'package:smart_pay_by_apex/src/views/app/home/logout/index.dart';
 import 'package:smart_pay_by_apex/src/views/app/secret_history_view.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signin/bloc/index.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signin/signin_view.dart';
 
 import '../../../logic/services/local_storage_service.dart';
+import '../../auth/models/auth_response.dart';
+import '../../auth/signin/sign_in_with_pin.dart';
 import '../../utils/app_assets.dart';
 import '../../utils/app_dimentions.dart';
 import '../../utils/components/app_button.dart';
@@ -22,18 +27,18 @@ import 'bloc/index.dart';
 class HomeView extends StatefulWidget {
   static const String routeName = '/HomeView';
 
-  HomeView({super.key});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  final _homeBloc = HomeBloc(InitialHomeState());
+  final _homeBloc = HomeBloc(const InitialHomeState());
 
-  final _authBloc = SignInBloc(InitialAuthState());
+  final _authBloc = SignInBloc(const InitialAuthState());
 
-  final _logoutBloc = LogoutBloc(UnLogoutState());
+  final _logoutBloc = LogoutBloc(const UnLogoutState());
 
   @override
   void initState() {
@@ -47,7 +52,6 @@ class _HomeViewState extends State<HomeView> {
       bloc: _authBloc,
       listener: (BuildContext context, SignInState state) {},
       builder: (context, authState) {
-        var loaded = (authState is SignInLoadedAuthState);
         return Scaffold(
           floatingActionButton: FloatingActionButton.extended(
             backgroundColor: AppColors.kprimary,
@@ -90,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
                     centerItems: true,
                     context,
                     title:
-                        'Welcome ${loaded ? authState.authResponse.data!.user!.fullName! : 'User'}',
+                        'Welcome ${User.getPresentUser()?.fullName ?? 'error fetching Full Name'}',
                     subTitleWidget: Text.rich(
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 16,
@@ -103,7 +107,7 @@ class _HomeViewState extends State<HomeView> {
                           const TextSpan(text: 'Registered email: '),
                           TextSpan(
                             text:
-                                '(${loaded ? authState.authResponse.data!.user!.email : 'demo@demo.com'})',
+                                '(${User.getPresentUser()?.email ?? 'error fetching Email'})',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge
@@ -117,34 +121,53 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                   ),
-                  BlocBuilder<HomeBloc, HomeState>(
+                  BlocConsumer<HomeBloc, HomeState>(
                       bloc: _homeBloc,
-                      builder: (context, state) {
-                        var isLoaded = (state is LoadedHomeState);
-                        var isLoading = (state is LoadinglHomeState);
+                      listener: (context, state) {
+                        // Use null-aware operators for safe navigation
+                        var secret = (state is LoadedHomeState)
+                            ? state.response.data?.secret
+                            : null;
 
-                        var allSecrete = LocalStorageService.getList(
-                            Constants.secretHistory);
+                        var allSecrets = LocalStorageService.getList(
+                          Constants.secretHistory(User.getPresentUser()?.email),
+                        );
 
-                        /// Stop duplicate entry
-                        if (!allSecrete.contains(isLoaded
-                            ? state.response.data?.secret ?? ''
-                            : '')) {
-                          isLoaded
-                              ? allSecrete
-                                  .add((state.response.data?.secret ?? ''))
-                              : null;
+                        if (secret != null && allSecrets.isEmpty) {
+                          LocalStorageService.setList(
+                              Constants.secretHistory(
+                                  User.getPresentUser()?.email),
+                              [secret]);
+                        } else {
+                          if (secret != null) {
+                            allSecrets.add(secret);
+                            LocalStorageService.setList(
+                              Constants.secretHistory(
+                                  User.getPresentUser()?.email),
+                              allSecrets,
+                            );
+                          }
                         }
 
-                        LocalStorageService.setList(
-                            Constants.secretHistory, allSecrete);
+                        Logger.log(
+                            tag: Tag.DEBUG,
+                            message: 'All Secret: ' + allSecrets.toString());
+                      },
+                      builder: (context, state) {
+                        var isLoading = state is LoadinglHomeState;
+
+                        var secret = (state is LoadedHomeState)
+                            ? state.response.data?.secret
+                            : null;
+                        if (isLoading) {
+                          return SecretCard(
+                              onPressed: () {}, secret: 'Loading...');
+                        }
 
                         return SecretCard(
-                            secret: isLoading
-                                ? 'Loading...'
-                                : isLoaded
-                                    ? (state.response.data!.secret!)
-                                    : ' Failed to get new Secret');
+                          onPressed: () {},
+                          secret: secret ?? 'Failed to get new Secret',
+                        );
                       }),
                   AppDimentions.verticalSpace(AppDimentions.k26 * 3.5),
                   AppButton(
@@ -175,7 +198,19 @@ class _HomeViewState extends State<HomeView> {
 
                       if (state is InLogoutState) {
                         Go(context).pop();
-                        Go(context).to(routeName: SigninView.routeName);
+                        String? previousUserPin = LocalStorageService.getString(
+                            Constants.securePin(User.getPresentUser()?.email));
+                        String? userBearerToken = LocalStorageService.getString(
+                            Constants.bearerToken);
+                        User? user = User.getPresentUser();
+                        if (!(previousUserPin.isEmpty &&
+                            userBearerToken.isEmpty &&
+                            user != null)) {
+                          Go(context).toAndReplaceAllNamedRoute(
+                              routeName: SignInWithPincodeView.routeName);
+                        } else {
+                          Go(context).to(routeName: SigninView.routeName);
+                        }
                       }
                     },
                     child: AppButton(
@@ -200,9 +235,11 @@ class _HomeViewState extends State<HomeView> {
 
 class SecretCard extends StatelessWidget {
   final String secret;
+  final void Function()? onPressed;
   const SecretCard({
     super.key,
     required this.secret,
+    required this.onPressed,
   });
 
   @override
@@ -245,7 +282,15 @@ class SecretCard extends StatelessWidget {
             ),
           ),
           AppDimentions.horizontalSpace(),
-          const ImageViewer(height: 24, width: 24, imagePath: AppAsset.check)
+          onPressed == null
+              ? IconButton(
+                  onPressed: onPressed,
+                  icon: const Icon(
+                    Icons.delete,
+                    size: 20,
+                  ))
+              : const ImageViewer(
+                  height: 20, width: 20, imagePath: AppAsset.check)
         ],
       ),
     );

@@ -12,8 +12,9 @@ import '../utils/components/app_button.dart';
 import '../utils/enums.dart';
 
 class SuccessView extends StatefulWidget {
+  final String? name;
   static const String routeName = '/SuccessView';
-  const SuccessView({super.key});
+  const SuccessView({super.key, required this.name});
 
   @override
   State<SuccessView> createState() => _SuccessViewState();
@@ -30,13 +31,14 @@ class _SuccessViewState extends State<SuccessView> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timerCount > 0) {
         setState(() {
           _timerCount--;
         });
       } else {
         timer.cancel();
+
         Go(context).to(routeName: HomeView.routeName);
       }
     });
@@ -63,7 +65,7 @@ class _SuccessViewState extends State<SuccessView> {
               HeaderWidget(
                 context,
                 centerItems: true,
-                title: 'Congratulations, Jesse Dan',
+                title: 'Congratulations, ${widget.name ?? 'User'}',
                 subtitle:
                     'You’ve completed the onboarding, you can start using',
               ),

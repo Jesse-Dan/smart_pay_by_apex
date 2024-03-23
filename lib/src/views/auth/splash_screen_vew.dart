@@ -17,7 +17,7 @@ class _SplashScreenViewState extends State<SplashScreenView> {
   _SplashScreenViewState() {
     Timer(
       Constants.splashScreenDuration,
-      () => Go(context).to(
+      () => Go(context).toAndReplaceAllNamedRoute(
         routeName: Constants.routeAfterSplashScreen,
       ),
     );

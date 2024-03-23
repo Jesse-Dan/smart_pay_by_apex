@@ -6,7 +6,7 @@ import 'verify_event.dart';
 import 'verify_state.dart';
 
 class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
-  VerifyBloc(VerifyState initialState) : super(initialState) {
+  VerifyBloc(super.initialState) {
     on<VerifyEvent>((event, emit) {
       return emit.forEach<VerifyState>(
         event.applyAsync(currentState: state, bloc: this),

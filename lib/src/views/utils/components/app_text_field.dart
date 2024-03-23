@@ -69,7 +69,7 @@ class AppTextField extends StatefulWidget {
   /// content Padding of TF
   EdgeInsetsGeometry? contentPadding;
   AppTextField(
-      {Key? key,
+      {super.key,
       required this.controller,
       this.hintText = 'Enter Text',
       this.obscureText = false,
@@ -88,8 +88,7 @@ class AppTextField extends StatefulWidget {
       this.fieldTextStyle,
       this.prefix,
       this.suffix,
-      this.contentPadding})
-      : super(key: key);
+      this.contentPadding});
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();

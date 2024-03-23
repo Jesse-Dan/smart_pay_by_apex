@@ -2,33 +2,35 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_navigator/go.dart';
+import 'package:go_navigator/go/go.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_pay_by_apex/src/logic/handler/base_handler.dart';
 import 'package:smart_pay_by_apex/src/logic/services/local_storage_service.dart';
-import 'package:smart_pay_by_apex/src/views/auth/success_view.dart';
+import 'package:smart_pay_by_apex/src/views/app/home/home.dart';
+import 'package:smart_pay_by_apex/src/views/auth/models/auth_response.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signin/signin_view.dart';
 import 'package:smart_pay_by_apex/src/views/utils/constants.dart';
 
-import '../../../../logic/logger/logger.dart';
-import '../../../utils/app_dimentions.dart';
-import '../../../utils/components/app_button.dart';
-import '../../../utils/components/back_button.dart';
-import '../../../utils/components/header_widget.dart';
-import '../../../utils/components/numeric_keyboard.dart';
-import '../../../utils/enums.dart';
-import '../../../utils/style/app_colors.dart';
+import '../../../logic/logger/logger.dart';
+import '../../utils/app_dimentions.dart';
+import '../../utils/components/app_button.dart';
+import '../../utils/components/back_button.dart';
+import '../../utils/components/header_widget.dart';
+import '../../utils/components/numeric_keyboard.dart';
+import '../../utils/enums.dart';
+import '../../utils/style/app_colors.dart';
 
-class SetPincodeView extends StatefulWidget {
-  static const String routeName = '/SetPincodeView';
-  const SetPincodeView({super.key, required this.name, required this.email});
-
-  final String name;
-  final String email;
+class SignInWithPincodeView extends StatefulWidget {
+  static const String routeName = '/SignInWithPincodeView';
+  const SignInWithPincodeView({
+    super.key,
+  });
 
   @override
-  State<SetPincodeView> createState() => _SetPincodeViewState();
+  State<SignInWithPincodeView> createState() => _SignInWithPincodeViewState();
 }
 
-class _SetPincodeViewState extends State<SetPincodeView> {
+class _SignInWithPincodeViewState extends State<SignInWithPincodeView> {
   final pincodeCtl = TextEditingController();
 
   late final PinTheme defaultPinTheme;
@@ -112,11 +114,13 @@ class _SetPincodeViewState extends State<SetPincodeView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              backButton(context),
+              backButton(context, () {
+                Go(context).to(routeName: SigninView.routeName);
+              }),
               HeaderWidget(context,
-                  title: 'Set your PIN code',
+                  title: 'Sign in with PIN',
                   subtitle:
-                      'We use state-of-the-art security measures to protect your information at all times'),
+                      'Explore Our state-of-the-art security measures set aside to protect your information at all times'),
               Align(
                 alignment: Alignment.center,
                 child: Pinput(
@@ -147,28 +151,31 @@ class _SetPincodeViewState extends State<SetPincodeView> {
                 buttonType: ButtonType.LONG_BTN,
                 flex: true,
                 applyMargin: true,
-                btnText: 'Create PIN',
+                btnText: 'Sign In',
                 onTap: () {
-                  BaseHandler(
+                  String previousUserPin = LocalStorageService.getString(
+                      Constants.securePin(User.getPresentUser()?.email));
+                  Logger.log(
+                      tag: Tag.DEBUG,
+                      message:
+                          'PREVOIUS PIN: $previousUserPin , INPUT PIN:${pincodeCtl.text}');
+
+                  if (previousUserPin.trim().contains(pincodeCtl.text.trim())) {
+                    Go(context).to(routeName: HomeView.routeName);
+                  } else {
+                    BaseHandler(
                       context: context,
                       tag: Tag.CALLBACK,
-                      title: 'New Pin',
-                      message: 'Are you certain of your new Pin?',
-                      handlerBtnCount: HandlerBtnCount.two,
+                      title: 'Incorrect',
+                      message:
+                          'The pin you entered is doesn\'t match what we have, check and try again.',
+                      handlerBtnCount: HandlerBtnCount.one,
                       callBackOne: () {
                         Go(context).pop();
                       },
-                      callBackTwo: () {
-                        LocalStorageService.setString(
-                            Constants.securePin(widget.email), pincodeCtl.text);
-                        Go(context).to(
-                            routeName: SuccessView.routeName,
-                            args: GoArgs(args: [
-                              {'name': widget.name}
-                            ]));
-                      },
                       callBackTextOne: 'go back',
-                      callBackTextTwo: 'proceed');
+                    );
+                  }
                 },
               )
             ],

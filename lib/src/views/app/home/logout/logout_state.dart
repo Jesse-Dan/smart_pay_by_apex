@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../model/logout_response.dart';
 
 abstract class LogoutState extends Equatable {
-  LogoutState();
+  const LogoutState();
 
   @override
   List<Object> get props => [];
@@ -11,7 +11,7 @@ abstract class LogoutState extends Equatable {
 
 /// UnInitialized
 class UnLogoutState extends LogoutState {
-  UnLogoutState();
+  const UnLogoutState();
 
   @override
   String toString() => 'UnLogoutState';
@@ -19,7 +19,7 @@ class UnLogoutState extends LogoutState {
 
 /// Loading
 class LoadingLogoutState extends LogoutState {
-  LoadingLogoutState();
+  const LoadingLogoutState();
 
   @override
   String toString() => 'LoadingLogoutState';
@@ -27,7 +27,7 @@ class LoadingLogoutState extends LogoutState {
 
 /// Initialized
 class InLogoutState extends LogoutState {
-  InLogoutState(this._logoutResponse);
+  const InLogoutState(this._logoutResponse);
 
   final LogoutResponse _logoutResponse;
 
@@ -39,7 +39,7 @@ class InLogoutState extends LogoutState {
 }
 
 class ErrorLogoutState extends LogoutState {
-  ErrorLogoutState(this.errorMessage);
+  const ErrorLogoutState(this.errorMessage);
 
   final String errorMessage;
 

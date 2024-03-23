@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:bloc/bloc.dart';
@@ -6,7 +5,7 @@ import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bl
 
 class GetTokenBloc extends Bloc<GetTokenEvent, GetTokenState> {
 
-  GetTokenBloc(GetTokenState initialState) : super(initialState){
+  GetTokenBloc(super.initialState){
    on<GetTokenEvent>((event, emit) {
       return emit.forEach<GetTokenState>(
         event.applyAsync(currentState: state, bloc: this),

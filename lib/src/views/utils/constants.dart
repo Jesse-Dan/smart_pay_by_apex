@@ -1,9 +1,7 @@
-import 'package:smart_pay_by_apex/src/views/auth/signin/signin_view.dart';
-import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/signup_view.dart';
+import '../auth/signup/signup_view/signup_view.dart';
 
 /// HOLDS DATA THAT IS CONSTANT THROUGH OUT THE APP
 abstract class Constants {
-
   ///CONSTANT STRINGS
   static const String appName = 'SmartPay-By-APEX';
 
@@ -17,10 +15,13 @@ abstract class Constants {
 
   /// STORAGE KEYS
   static const String bearerToken = 'BEARER-TOKEN';
-  static const String secretHistory = 'SECRET-HISTORY';
-
+  static String secretHistory(email) => 'SECRET-HISTORY#$email';
+  static String securePin(email) => 'SECURE-PIN#$email';
+  static const String userKey = 'USER-KEY';
+  static String secureToken(email) => 'SECURE-Token#$email';
 
   /// API VALUES
   /// [0] - BASE URL
-  static const String baseUrl = 'https://mobile-test-2d7e555a4f85.herokuapp.com/api/v1/';
+  static const String baseUrl =
+      'https://mobile-test-2d7e555a4f85.herokuapp.com/api/v1/';
 }

@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:smart_pay_by_apex/src/views/auth/models/get_email_token_response.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/get_token_response.dart';
 
 abstract class GetTokenState extends Equatable {
-  GetTokenState();
+  const GetTokenState();
 
   @override
   List<Object> get props => [];
@@ -11,7 +10,7 @@ abstract class GetTokenState extends Equatable {
 
 /// UnInitialized
 class InitialGetTokenState extends GetTokenState {
-  InitialGetTokenState();
+  const InitialGetTokenState();
 
   @override
   String toString() => 'UnGetTokenState';
@@ -19,7 +18,7 @@ class InitialGetTokenState extends GetTokenState {
 
 /// LoadingGetTokenState
 class LoadingGetTokenState extends GetTokenState {
-  LoadingGetTokenState();
+  const LoadingGetTokenState();
 
   @override
   String toString() => 'LoadingGetTokenState';
@@ -27,7 +26,7 @@ class LoadingGetTokenState extends GetTokenState {
 
 /// Initialized
 class LoadedGetTokenState extends GetTokenState {
-  LoadedGetTokenState(this.getTokenResponse);
+  const LoadedGetTokenState(this.getTokenResponse);
 
   final GetTokenResponse getTokenResponse;
 
@@ -39,7 +38,7 @@ class LoadedGetTokenState extends GetTokenState {
 }
 
 class ErrorGetTokenState extends GetTokenState {
-  ErrorGetTokenState(this.errorMessage);
+  const ErrorGetTokenState(this.errorMessage);
 
   final String errorMessage;
 

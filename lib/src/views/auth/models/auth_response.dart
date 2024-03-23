@@ -4,6 +4,9 @@
 
 import 'dart:convert';
 
+import '../../../logic/services/local_storage_service.dart';
+import '../../utils/constants.dart';
+
 SignInResponse signinSignupResponseFromJson(String str) =>
     SignInResponse.fromJson(json.decode(str));
 
@@ -155,4 +158,10 @@ class User {
         "country": country,
         "avatar": avatar,
       };
+
+  static User? getPresentUser() => User.fromJson(
+      json.decode(LocalStorageService.getString(Constants.userKey)));
+
+  static setPresentUser(User user) => LocalStorageService.setString(
+      Constants.userKey, json.encode(user.toJson()));
 }

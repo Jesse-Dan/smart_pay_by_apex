@@ -7,6 +7,7 @@ import 'package:smart_pay_by_apex/src/views/utils/enums.dart';
 import 'package:smart_pay_by_apex/src/views/utils/helpers/image_view_helper.dart';
 
 import '../../logic/services/local_storage_service.dart';
+import '../auth/models/auth_response.dart';
 import '../utils/constants.dart';
 import '../utils/style/app_colors.dart';
 import 'home/home.dart';
@@ -22,7 +23,8 @@ class SecretHistoryView extends StatefulWidget {
 
 class _SecretHistoryViewState extends State<SecretHistoryView> {
   List getHistory() {
-    return LocalStorageService.getList(Constants.secretHistory);
+    return LocalStorageService.getList(
+        Constants.secretHistory(User.getPresentUser()?.email ?? ''));
   }
 
   @override
@@ -66,7 +68,24 @@ class _SecretHistoryViewState extends State<SecretHistoryView> {
                   : ListView.builder(
                       itemCount: getHistory().length,
                       itemBuilder: (ctx, i) {
-                        return SecretCard(secret: getHistory()[i]);
+                        return SecretCard(
+                          secret: getHistory()[i],
+                          onPressed: () {
+                            var allSecrete = LocalStorageService.getList(
+                                Constants.secretHistory(
+                                    User.getPresentUser()?.email));
+
+                            /// Stop duplicate entry
+                            if (allSecrete.contains(allSecrete[i])) {
+                              allSecrete.add(allSecrete[i]);
+                            }
+
+                            LocalStorageService.setList(
+                                Constants.secretHistory(
+                                    User.getPresentUser()?.email),
+                                allSecrete);
+                          },
+                        );
                       },
                     ),
             )

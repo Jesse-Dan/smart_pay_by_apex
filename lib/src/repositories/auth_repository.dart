@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_pay_by_apex/src/logic/client_options/client.dart';
 import 'package:smart_pay_by_apex/src/logic/interface/auth_interface.dart';
-import 'package:smart_pay_by_apex/src/logic/services/local_storage_service.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/model/signup_payload.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/verify_token_payload.dart';
 import 'package:smart_pay_by_apex/src/views/utils/enums.dart';

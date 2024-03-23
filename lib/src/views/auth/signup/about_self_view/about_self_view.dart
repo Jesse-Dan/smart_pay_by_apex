@@ -1,9 +1,17 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_navigator/go.dart';
+import 'package:smart_pay_by_apex/src/logic/handler/handlers/loading_handler.dart';
 import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
+import 'package:smart_pay_by_apex/src/logic/mixins/validator.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/set_pin_view/set_pincode_view.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/bloc/index.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/model/signup_payload.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/signup_view/signup_view.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_assets.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_dimentions.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/app_button.dart';
@@ -12,8 +20,11 @@ import 'package:smart_pay_by_apex/src/views/utils/enums.dart';
 import 'package:smart_pay_by_apex/src/views/utils/helpers/image_view_helper.dart';
 import 'package:smart_pay_by_apex/src/views/utils/style/app_colors.dart';
 
+import '../../../../logic/handler/handlers/error_handler.dart';
+import '../../../../logic/handler/handlers/success_handler.dart';
 import '../../../utils/components/back_button.dart';
 import '../../../utils/components/header_widget.dart';
+import '../../../utils/helpers/target_platform.dart';
 
 class AboutSelfView extends StatefulWidget {
   final String email;
@@ -24,8 +35,8 @@ class AboutSelfView extends StatefulWidget {
   State<AboutSelfView> createState() => _AboutSelfViewState();
 }
 
-class _AboutSelfViewState extends State<AboutSelfView> {
-  final firstNameCtl = TextEditingController();
+class _AboutSelfViewState extends State<AboutSelfView> with ValidatorMixin {
+  final fullNameCtl = TextEditingController();
   final userNameCtl = TextEditingController();
   final countryCtl = TextEditingController();
   final passwordCtl = TextEditingController();
@@ -38,6 +49,10 @@ class _AboutSelfViewState extends State<AboutSelfView> {
   Country? selctedCountry;
 
   Countries searchedCountries = [];
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final signUpBLoc = SendSignUpBloc(InitialSignUpState());
 
   List<Country> _buildSearchList(String userSearchTerm) {
     Logger.log(tag: Tag.DEBUG, message: 'Searching...');
@@ -118,108 +133,179 @@ class _AboutSelfViewState extends State<AboutSelfView> {
   @override
   Widget build(BuildContext context) {
     countryCtl.text = selctedCountry?.country ?? '';
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: AppColors.white,
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppDimentions.k16,
-            vertical: AppDimentions.k12,
-          ),
-          child: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                backButton(context),
-                HeaderWidget(
-                  context,
-                  titleWidget: Text.rich(
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.20000000298023224,
-                        color: AppColors.kgrey900),
-                    TextSpan(
-                      children: [
-                        TextSpan(text: 'Hey there! tell us a bit about '),
+    return BlocListener<SendSignUpBloc, SignUpState>(
+      bloc: signUpBLoc,
+      listener: (context, state) {
+        if (state is LoadingSignUpState) {
+          LoadingHandler(context: context);
+        }
+
+        if (state is SignUpLoadedSignUpState) {
+          Go(context).pop();
+          SuccessHandler(
+              context: context,
+              message: 'Registration Successful',
+              handlerBtnCount: HandlerBtnCount.one,
+              callBackTextOne: 'Proceed',
+              callBack: () {
+                Go(context).to(
+                    routeName: SetPincodeView.routeName,
+                    args: GoArgs(args: [
+                      {'name': fullNameCtl.text, 'email': widget.email}
+                    ]));
+              });
+        }
+
+        if (state is ErrorSignUpState) {
+          if (state.errorMessage == 'The email has already been taken.') {
+            ErrorHandler(
+                context: context,
+                message: state.errorMessage,
+                handlerBtnCount: HandlerBtnCount.one,
+                callBackTextOne: 'Okay',
+                callBack: () {
+                  Go(context).toAndClearAll(routeName: SignupView.routeName);
+                });
+          } else {
+            Go(context).pop();
+            ErrorHandler(
+                context: context,
+                message: state.errorMessage,
+                handlerBtnCount: HandlerBtnCount.one,
+                callBackTextOne: 'Okay');
+          }
+        }
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: AppColors.white,
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimentions.k16,
+              vertical: AppDimentions.k12,
+            ),
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    backButton(context),
+                    HeaderWidget(
+                      context,
+                      titleWidget: Text.rich(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.20000000298023224,
+                            color: AppColors.kgrey900),
                         TextSpan(
-                          text: 'yourself',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.20000000298023224,
-                                  color: AppColors.kprimary),
+                          children: [
+                            TextSpan(text: 'Hey there! tell us a bit about '),
+                            TextSpan(
+                              text: 'yourself',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.20000000298023224,
+                                      color: AppColors.kprimary),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                AppTextField(hintText: 'Full name', controller: firstNameCtl),
-                AppTextField(hintText: 'Username', controller: userNameCtl),
-                AppTextField(
-                    prefix: selctedCountry != null
-                        ? Padding(
-                            padding: EdgeInsets.all(AppDimentions.k10 - 2),
-                            child: ImageViewer(
-                                fit: BoxFit.fill,
-                                height: 24,
-                                width: 32,
-                                imagePath: selctedCountry!.flagUrl),
-                          )
-                        : null,
-                    hintText: 'Select Country',
-                    controller: countryCtl,
-                    readOnly: true,
-                    onTap: () {
-                      _contriesView(context);
-                    },
-                    suffix: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.fastLinearToSlowEaseIn,
-                      child: ImageViewer(
-                        height: 20,
-                        width: 20,
-                        imagePath: AppAsset.dropDownIcon,
-                        color: AppColors.kgrey500,
                       ),
-                    )),
-                AppTextField(
-                    obscureText: showPassword,
-                    hintText: 'Password',
-                    controller: passwordCtl,
-                    textFieldType: TextFieldType.PASSWORD,
-                    onSufficIconClicked: () =>
-                        setState(() => showPassword = !showPassword),
-                    onChanged: (p0) {
-                      setState(() {});
-                    },
-                    fieldTextStyle: Theme.of(context)
-                        .textTheme
-                        .subtitle1!
-                        .copyWith(
-                            color: AppColors.kprimaryColor,
-                            fontSize: passwordCtl.text.isEmpty ? 14 : 25,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: passwordCtl.text.isEmpty ? 1 : 3)),
-                AppDimentions.verticalSpace(AppDimentions.large),
-                AppButton(
-                  buttonType: ButtonType.LONG_BTN,
-                  flex: true,
-                  applyMargin: false,
-                  btnText: 'Continue',
-                  onTap: () {
-                    Go(context).to(routeName: SetPincodeView.routeName);
-                  },
+                    ),
+                    AppTextField(
+                      hintText: 'Full name',
+                      controller: fullNameCtl,
+                      validator: (val) => validateTextField(val!),
+                    ),
+                    AppTextField(
+                      hintText: 'Username',
+                      controller: userNameCtl,
+                      validator: (val) => validateTextField(val!),
+                    ),
+                    AppTextField(
+                      prefix: selctedCountry != null
+                          ? Padding(
+                              padding: EdgeInsets.all(AppDimentions.k10 - 2),
+                              child: ImageViewer(
+                                  fit: BoxFit.fill,
+                                  height: 24,
+                                  width: 32,
+                                  imagePath: selctedCountry!.flagUrl),
+                            )
+                          : null,
+                      hintText: 'Select Country',
+                      controller: countryCtl,
+                      readOnly: true,
+                      onTap: () {
+                        _contriesView(context);
+                      },
+                      suffix: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        child: ImageViewer(
+                          height: 20,
+                          width: 20,
+                          imagePath: AppAsset.dropDownIcon,
+                          color: AppColors.kgrey500,
+                        ),
+                      ),
+                      validator: (val) => validateTextField(val!),
+                    ),
+                    AppTextField(
+                      obscureText: showPassword,
+                      hintText: 'Password',
+                      controller: passwordCtl,
+                      textFieldType: TextFieldType.PASSWORD,
+                      onSufficIconClicked: () =>
+                          setState(() => showPassword = !showPassword),
+                      onChanged: (p0) {
+                        setState(() {});
+                      },
+                      fieldTextStyle:
+                          Theme.of(context).textTheme.subtitle1!.copyWith(
+                              color: AppColors.kprimaryColor,
+                              fontSize: showPassword
+                                  ? 14
+                                  : passwordCtl.text.isEmpty
+                                      ? 14
+                                      : 25,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: passwordCtl.text.isEmpty ? 1 : 3),
+                      validator: (val) => validatePassword(val!),
+                    ),
+                    AppDimentions.verticalSpace(AppDimentions.large),
+                    AppButton(
+                      buttonType: ButtonType.LONG_BTN,
+                      flex: true,
+                      applyMargin: false,
+                      btnText: 'Continue',
+                      onTap: () {
+                        if (formKey.currentState!.validate()) {
+                          String platformString = getPlatformString();
+                          signUpBLoc.add(SendSignUpEvent(SignUpPayload(
+                            fullName: fullNameCtl.text,
+                            username: userNameCtl.text,
+                            email: widget.email,
+                            country: selctedCountry!.tag,
+                            password: passwordCtl.text,
+                            deviceName: platformString,
+                          )));
+                        }
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

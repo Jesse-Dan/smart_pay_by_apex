@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:smart_pay_by_apex/src/views/auth/onboarding/models/onboarding_view_model.dart';
+import 'package:smart_pay_by_apex/src/views/utils/app_assets.dart';
 import 'package:smart_pay_by_apex/src/views/utils/app_dimentions.dart';
-import 'package:smart_pay_by_apex/src/views/utils/components/app_button.dart';
+import 'package:smart_pay_by_apex/src/views/utils/helpers/image_view_helper.dart';
 import 'package:smart_pay_by_apex/src/views/utils/style/app_colors.dart';
-
-import '../../utils/helpers/image_view_helper.dart';
 
 class OnboardingView extends StatefulWidget {
   static const String routeName = '/OnboardingScreen';
@@ -19,86 +17,55 @@ class _OnboardingViewState extends State<OnboardingView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          actions: [
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Skip',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.kpeachGreenColor),
-                textAlign: TextAlign.right,
-              ),
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+        body: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: AppDimentions.k16),
+
+          /// MAIN COLUMN
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Center(
-                      child: ImageViewer(
-                          imagePath: OnboardingViewModel
-                              .onboardingViewModel[0].devicePath),
-                    ),
-                    Center(
-                      child: ImageViewer(
-                          imagePath: OnboardingViewModel
-                              .onboardingViewModel[0].illustrationPath),
-                    ),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: Colors.white,
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.white.withOpacity(0.6),
-                                Colors.white,
-                                Colors.white,
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.white.withOpacity(0.6),
-                                  spreadRadius: 100,
-                                  offset: const Offset(-8, -4))
-                            ]),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            AppDimentions.verticalSpace(
-                                AppDimentions.extraLarge),
-                            Text(
-                              OnboardingViewModel.onboardingViewModel[0].title,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 24),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(OnboardingViewModel
-                                .onboardingViewModel[0].description),
-                            AppButton()
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+            children: [
+              /// SKIP BTN
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Skip',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.kpeachGreenColor),
+                    textAlign: TextAlign.right,
+                  ),
                 ),
-              ]),
+              ),
+
+              /// IMAGES
+              Padding(
+                // padding: EdgeInsets.only(
+                // top: MediaQuery.of(context).size.height * 3 / 30),
+                padding: const EdgeInsets.all(0),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.2,
+                  width: double.infinity,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const ImageViewer(
+                          // height: MediaQuery.of(context).size.height / 3,
+                          width: 280,
+                          fit: BoxFit.contain,
+                          imagePath: AppAsset.device1),
+                      ImageViewer(
+                          height: MediaQuery.of(context).size.height / 6,
+                          width: 292,
+                          imagePath: AppAsset.illustration1),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

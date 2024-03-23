@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../../models/auth_response.dart';
+
 SignUpResponse signUpResponseFromJson(String str) => SignUpResponse.fromJson(json.decode(str));
 
 String signUpResponseToJson(SignUpResponse data) => json.encode(data.toJson());
@@ -81,52 +83,5 @@ class Data {
     Map<String, dynamic> toJson() => {
         "user": user?.toJson(),
         "token": token,
-    };
-}
-
-class User {
-    String? fullName;
-    String? username;
-    String? email;
-    String? country;
-    String? id;
-
-    User({
-        this.fullName,
-        this.username,
-        this.email,
-        this.country,
-        this.id,
-    });
-
-    User copyWith({
-        String? fullName,
-        String? username,
-        String? email,
-        String? country,
-        String? id,
-    }) => 
-        User(
-            fullName: fullName ?? this.fullName,
-            username: username ?? this.username,
-            email: email ?? this.email,
-            country: country ?? this.country,
-            id: id ?? this.id,
-        );
-
-    factory User.fromJson(Map<String, dynamic> json) => User(
-        fullName: json["full_name"],
-        username: json["username"],
-        email: json["email"],
-        country: json["country"],
-        id: json["id"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "full_name": fullName,
-        "username": username,
-        "email": email,
-        "country": country,
-        "id": id,
     };
 }

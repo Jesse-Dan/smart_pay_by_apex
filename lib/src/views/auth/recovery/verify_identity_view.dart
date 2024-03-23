@@ -131,16 +131,16 @@ class _VerifyIdentityViewState extends State<VerifyIdentityView> {
                 btnText: 'Continue',
                 onTap: () {
                   /// Request  Token
-                  final _getTokenBloc = GetTokenBloc(InitialGetTokenState());
+                  final getTokenBloc = GetTokenBloc(const InitialGetTokenState());
 
-                  _getTokenBloc.add(LoadGetTokenEvent(
-                      getTokenPayload: GetTokenPayload(email: widget.email)));
+                  getTokenBloc.add(LoadGetTokenEvent(
+                      getTokenPayload: GetTokenPayload(email: widget.email, context: context)));
 
                   /// Go to verify Screen
                   Go(context).to(
                       routeName: VerifyView.routeName,
                       args: GoArgs(args: [
-                        {'email': widget.email}
+                        {'email': widget.email,'route':CreateNewPasswordView.routeName}
                       ]));
                 },
               ),

@@ -8,7 +8,7 @@ import 'app_custom_loader.dart';
 
 class AppButton extends StatelessWidget {
   AppButton(
-      {Key? key,
+      {super.key,
       this.btnText,
       this.btntTextAlign,
       this.onDoubleTap,
@@ -33,8 +33,7 @@ class AppButton extends StatelessWidget {
       this.loadingText = 'loading',
       this.borderRadius,
       this.disabled = false,
-      this.flex = true})
-      : super(key: key) {
+      this.flex = true}) {
     // if ((btnContentType != BtnContentType.TEXT && btnContent == null) ||
     //     (btnContentType != BtnContentType.TEXT &&
     //         (btnText == '' || btnText == null))) {

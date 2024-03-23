@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:smart_pay_by_apex/src/views/app/home/model/home_secret_response.dart';
 
 abstract class HomeState extends Equatable {
-  HomeState();
+  const HomeState();
 
   @override
   List<Object> get props => [];
@@ -10,7 +10,7 @@ abstract class HomeState extends Equatable {
 
 /// UnInitialized
 class InitialHomeState extends HomeState {
-  InitialHomeState();
+  const InitialHomeState();
 
   @override
   String toString() => 'InitialHomeState';
@@ -18,7 +18,7 @@ class InitialHomeState extends HomeState {
 
 /// UnInitialized
 class LoadinglHomeState extends HomeState {
-  LoadinglHomeState();
+  const LoadinglHomeState();
 
   @override
   String toString() => 'LoadinglHomeState';
@@ -26,7 +26,7 @@ class LoadinglHomeState extends HomeState {
 
 /// Initialized
 class LoadedHomeState extends HomeState {
-  LoadedHomeState(this.response);
+  const LoadedHomeState(this.response);
 
   final HomeSecretResponse response;
 
@@ -38,7 +38,7 @@ class LoadedHomeState extends HomeState {
 }
 
 class ErrorBlocState extends HomeState {
-  ErrorBlocState(this.errorMessage);
+  const ErrorBlocState(this.errorMessage);
 
   final String errorMessage;
 

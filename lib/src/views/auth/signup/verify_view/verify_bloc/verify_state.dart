@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:smart_pay_by_apex/src/views/auth/models/auth_response.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/verify_token_response.dart';
 
 
 abstract class VerifyState extends Equatable {
-  VerifyState();
+  const VerifyState();
 
   @override
   List<Object> get props => [];
@@ -12,7 +11,7 @@ abstract class VerifyState extends Equatable {
 
 /// LoadingVerifyState
 class LoadingVerifyState extends VerifyState {
-  LoadingVerifyState();
+  const LoadingVerifyState();
 
   @override
   String toString() => 'LoadingVerifyState';
@@ -20,7 +19,7 @@ class LoadingVerifyState extends VerifyState {
 
 /// InitialVerifyState
 class InitialVerifyState extends VerifyState {
-  InitialVerifyState();
+  const InitialVerifyState();
 
   @override
   String toString() => 'UnVerifyState';
@@ -28,7 +27,7 @@ class InitialVerifyState extends VerifyState {
 
 /// Initialized
 class VerifyLoadedVerifyState extends VerifyState {
-  VerifyLoadedVerifyState(this.verifyTokenResponse);
+  const VerifyLoadedVerifyState(this.verifyTokenResponse);
 
   final VerifyTokenResponse verifyTokenResponse;
 
@@ -40,7 +39,7 @@ class VerifyLoadedVerifyState extends VerifyState {
 }
 
 class ErrorVerifyState extends VerifyState {
-  ErrorVerifyState(this.errorMessage);
+  const ErrorVerifyState(this.errorMessage);
 
   final String errorMessage;
 
