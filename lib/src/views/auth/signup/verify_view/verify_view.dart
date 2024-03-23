@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_navigator/go.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_pay_by_apex/src/logic/logger/logger.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bloc/index.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/verify_token_payload.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_bloc/index.dart';
-import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_bloc/verify_bloc.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/app_notifier.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/numeric_keyboard.dart';
 
@@ -35,9 +37,31 @@ class _VerifyViewState extends State<VerifyView> {
   late final PinTheme focusedPinTheme;
   late final PinTheme submittedPinTheme;
   late final PinTheme errorTheme;
+  int _timerCount = 30;
+  late Timer _timer;
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (_timerCount > 0) {
+        setState(() {
+          _timerCount--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
+    _startTimer();
+
     defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
@@ -68,15 +92,18 @@ class _VerifyViewState extends State<VerifyView> {
     super.initState();
   }
 
-  final _authBloc = VerifyBloc(InitialVerifyState());
+  final _verifyBloc = VerifyBloc(InitialVerifyState());
   final _getTokenBloc = GetTokenBloc(InitialGetTokenState());
+
+  String? pinErrorText;
+  String? token;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
         BlocListener<VerifyBloc, VerifyState>(
-          bloc: _authBloc,
+          bloc: _verifyBloc,
           listener: (context, state) {
             if (state is LoadingVerifyState) {
               LoadingHandler(context: context);
@@ -206,18 +233,17 @@ class _VerifyViewState extends State<VerifyView> {
                         submittedPinTheme: submittedPinTheme,
                         errorPinTheme: errorTheme,
                         validator: (s) {
-                          return s == '2222' ? null : 'Pin is incorrect';
+                          return pinErrorText;
                         },
                         pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                         showCursor: true,
-                        onCompleted: (pin) => print(pin),
                       ),
                     ),
                     AppDimentions.verticalSpace(AppDimentions.k20),
                     Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'Resend Code 30 secs',
+                          'Resend Code in $_timerCount ${_timerCount <= 1 ? 'sec' : 'secs'} ',
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge
@@ -233,7 +259,10 @@ class _VerifyViewState extends State<VerifyView> {
                       flex: true,
                       applyMargin: true,
                       btnText: 'Continue',
-                      onTap: () {},
+                      onTap: () {
+                        _verifyBloc.add(SendVerifyEvent(VerifyTokenPayload(
+                            email: widget.email, token: token)));
+                      },
                     ),
                   ],
                 ),
