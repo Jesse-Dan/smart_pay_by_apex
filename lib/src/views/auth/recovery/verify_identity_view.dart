@@ -134,7 +134,7 @@ class _VerifyIdentityViewState extends State<VerifyIdentityView> {
                   final getTokenBloc = GetTokenBloc(const InitialGetTokenState());
 
                   getTokenBloc.add(LoadGetTokenEvent(
-                      getTokenPayload: GetTokenPayload(email: widget.email, context: context)));
+                      getTokenPayload: GetTokenPayload(email: widget.email)));
 
                   /// Go to verify Screen
                   Go(context).to(

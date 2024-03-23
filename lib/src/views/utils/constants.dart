@@ -10,6 +10,9 @@ abstract class Constants {
 
   static const Duration notifierDuration = Duration(seconds: 40);
 
+  /// so sorry about this  had no time
+  static const Duration tokenDuration = Duration(seconds: 4);
+
   /// TO BE USED FOR TESTS TO CHOOSE
   static const String routeAfterSplashScreen = SignupView.routeName;
 

@@ -14,11 +14,9 @@ String getTokenPayloadToJson(GetTokenPayload data) =>
 
 class GetTokenPayload {
   String? email;
-  BuildContext context;
 
   GetTokenPayload({
     this.email,
-    required this.context,
   });
 
   GetTokenPayload copyWith({
@@ -26,17 +24,14 @@ class GetTokenPayload {
   }) =>
       GetTokenPayload(
         email: email ?? this.email,
-        context: context ?? context,
       );
 
   factory GetTokenPayload.fromJson(Map<String, dynamic> json) =>
       GetTokenPayload(
         email: json["email"],
-        context: json["context"],
       );
 
   Map<String, dynamic> toJson() => {
         "email": email,
-        "context": context,
       };
 }

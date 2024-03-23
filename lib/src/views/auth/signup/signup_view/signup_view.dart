@@ -45,249 +45,202 @@ class _SignupViewState extends State<SignupView> with ValidatorMixin {
   bool showPassword = true;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  
-    final _verifyBloc = VerifyBloc(const InitialVerifyState());
 
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<VerifyBloc, VerifyState>(
-      bloc: _verifyBloc,
-      listener: (context, state) {
-        if (state is LoadingVerifyState) {
-          LoadingHandler(context: context);
-        }
-
-        if (state is VerifyLoadedVerifyState) {
-          Go(context).pop();
-          SuccessHandler(
-              context: context,
-              message: 'Verification Successful',
-              handlerBtnCount: HandlerBtnCount.one,
-              callBackTextOne: 'Proceed',
-              callBack: () {});
-        }
-
-        if (state is ErrorVerifyState) {
-          if (state.errorMessage == 'The email has already been taken.') {
-            ErrorHandler(
-                context: context,
-                message: state.errorMessage,
-                handlerBtnCount: HandlerBtnCount.one,
-                callBackTextOne: 'Change Email',
-                callBack: () {
-                  Go(context).to(routeName: SignupView.routeName);
-                });
-          } else {
-            Go(context).pop();
-            ErrorHandler(
-                context: context,
-                message: state.errorMessage,
-                handlerBtnCount: HandlerBtnCount.one,
-                callBackTextOne: 'Okay');
-          }
-        }
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppDimentions.k16,
-              vertical: AppDimentions.k12,
-            ),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  backButton(context),
-                  HeaderWidget(context,
-                      titleWidget: Text.rich(
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.20000000298023224,
-                                  color: AppColors.kgrey900),
-                          TextSpan(children: [
-                            TextSpan(text: 'Create a '),
-                            TextSpan(
-                              text: 'Smartpay',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.20000000298023224,
-                                      color: AppColors.kprimary),
-                            ),
-                            TextSpan(text: ' account'),
-                          ])),
-                      subtitle: 'Join us as we make history in africa.'),
-                  AppTextField(
-                    hintText: 'Email',
-                    controller: emailCtl,
-                    validator: (val) => validateEmail(val!),
-                  ),
-                  AppDimentions.verticalSpace(AppDimentions.large),
-                  AppButton(
-                    buttonType: ButtonType.LONG_BTN,
-                    flex: true,
-                    applyMargin: false,
-                    btnText: 'Sign Up',
-                    onTap: () {
-                      if (formKey.currentState!.validate()) {
-                        /// Request  Token
-                        final getTokenBloc =
-                            GetTokenBloc(InitialGetTokenState());
-
-                        getTokenBloc.add(LoadGetTokenEvent(
-                            getTokenPayload: GetTokenPayload(
-                                email: emailCtl.text, context: context)));
-
-                        /// Go to verify Screen
-                        Go(context).to(
-                            routeName: VerifyView.routeName,
-                            args: GoArgs(args: [
-                              {
-                                'email': emailCtl.text,
-                                'route': AboutSelfView.routeName
-                              }
-                            ]));
-                      }
-                    },
-                  ),
-                  AppDimentions.verticalSpace(AppDimentions.large),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      buildSeparator(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'OR',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: -0.20000000298023224,
-                                  color: AppColors.kgrey500),
-                        ),
-                      ),
-                      buildSeparator(),
-                    ],
-                  ),
-                  AppDimentions.verticalSpace(AppDimentions.large),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      AppButton(
-                        onTap: () {
-                          BaseHandler(
-                              tag: Tag.DEBUG,
-                              title: 'Feature Not Found',
-                              context: context,
-                              message: 'This feature is not implemented.',
-                              handlerBtnCount: HandlerBtnCount.one,
-                              callBackTextOne: 'Okay');
-                        },
-                        addBorder: true,
-                        flex: true,
-                        applyMargin: false,
-                        btnContentType: BtnContentType.IMG,
-                        buttonType: ButtonType.LONG_BTN,
-                        btnColor: AppColors.white,
-                        borderColor: AppColors.kgrey300,
-                        btnContent:
-                            const ImageViewer(imagePath: AppAsset.googleLogo),
-                      ),
-                      AppDimentions.horizontalSpace(AppDimentions.medium),
-                      AppButton(
-                        onTap: () {
-                          BaseHandler(
-                              tag: Tag.DEBUG,
-                              title: 'Feature Not Found',
-                              context: context,
-                              message: 'This feature is not implemented.',
-                              handlerBtnCount: HandlerBtnCount.one,
-                              callBackTextOne: 'Okay');
-                        },
-                        addBorder: true,
-                        flex: true,
-                        applyMargin: false,
-                        buttonType: ButtonType.LONG_BTN,
-                        btnContentType: BtnContentType.IMG,
-                        btnColor: AppColors.white,
-                        borderColor: AppColors.kgrey300,
-                        btnContent:
-                            const ImageViewer(imagePath: AppAsset.appleLogo),
-                      )
-                    ],
-                  ),
-                  AppDimentions.verticalSpace(AppDimentions.k26 * 3),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text.rich(
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.20000000298023224,
-                          color: AppColors.kgrey500),
-                      textAlign: TextAlign.center,
-                      TextSpan(
-                        children: [
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppDimentions.k16,
+            vertical: AppDimentions.k12,
+          ),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                backButton(context),
+                HeaderWidget(context,
+                    titleWidget: Text.rich(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.20000000298023224,
+                            color: AppColors.kgrey900),
+                        TextSpan(children: [
+                          TextSpan(text: 'Create a '),
                           TextSpan(
-                            text: 'Already have an account? ',
+                            text: 'Smartpay',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.20000000298023224,
+                                    color: AppColors.kprimary),
                           ),
-                          TextSpan(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.20000000298023224,
-                                      color: AppColors.kprimary),
-                              text: 'Sign In',
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  String? previousUserPin =
-                                      LocalStorageService.getString(
-                                          Constants.securePin(
-                                              User.getPresentUser()?.email));
-                                  String? userBearerToken =
-                                      LocalStorageService.getString(
-                                          Constants.bearerToken);
+                          TextSpan(text: ' account'),
+                        ])),
+                    subtitle: 'Join us as we make history in africa.'),
+                AppTextField(
+                  hintText: 'Email',
+                  controller: emailCtl,
+                  validator: (val) => validateEmail(val!),
+                ),
+                AppDimentions.verticalSpace(AppDimentions.large),
+                AppButton(
+                  buttonType: ButtonType.LONG_BTN,
+                  flex: true,
+                  applyMargin: false,
+                  btnText: 'Sign Up',
+                  onTap: () {
+                    if (formKey.currentState!.validate()) {
+                      /// Request  Token
+                      final getTokenBloc = GetTokenBloc(InitialGetTokenState());
 
-                                  User? user = User.getPresentUser();
-                                  if (!(previousUserPin.isEmpty &&
-                                      userBearerToken.isEmpty &&
-                                      user != null)) {
-                                    Go(context).toAndReplaceAllNamedRoute(
-                                        routeName:
-                                            SignInWithPincodeView.routeName);
-                                  } else {
-                                    Go(context)
-                                        .to(routeName: SigninView.routeName);
-                                  }
-                                }),
-                        ],
+                      getTokenBloc.add(LoadGetTokenEvent(
+                          getTokenPayload: GetTokenPayload(
+                              email: emailCtl.text)));
+
+                      /// Go to verify Screen
+                      Go(context).to(
+                          routeName: VerifyView.routeName,
+                          args: GoArgs(args: [
+                            {
+                              'email': emailCtl.text,
+                              'route': AboutSelfView.routeName
+                            }
+                          ]));
+                    }
+                  },
+                ),
+                AppDimentions.verticalSpace(AppDimentions.large),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    buildSeparator(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        'OR',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: -0.20000000298023224,
+                            color: AppColors.kgrey500),
                       ),
                     ),
+                    buildSeparator(),
+                  ],
+                ),
+                AppDimentions.verticalSpace(AppDimentions.large),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AppButton(
+                      onTap: () {
+                        BaseHandler(
+                            tag: Tag.DEBUG,
+                            title: 'Feature Not Found',
+                            context: context,
+                            message: 'This feature is not implemented.',
+                            handlerBtnCount: HandlerBtnCount.one,
+                            callBackTextOne: 'Okay');
+                      },
+                      addBorder: true,
+                      flex: true,
+                      applyMargin: false,
+                      btnContentType: BtnContentType.IMG,
+                      buttonType: ButtonType.LONG_BTN,
+                      btnColor: AppColors.white,
+                      borderColor: AppColors.kgrey300,
+                      btnContent:
+                          const ImageViewer(imagePath: AppAsset.googleLogo),
+                    ),
+                    AppDimentions.horizontalSpace(AppDimentions.medium),
+                    AppButton(
+                      onTap: () {
+                        BaseHandler(
+                            tag: Tag.DEBUG,
+                            title: 'Feature Not Found',
+                            context: context,
+                            message: 'This feature is not implemented.',
+                            handlerBtnCount: HandlerBtnCount.one,
+                            callBackTextOne: 'Okay');
+                      },
+                      addBorder: true,
+                      flex: true,
+                      applyMargin: false,
+                      buttonType: ButtonType.LONG_BTN,
+                      btnContentType: BtnContentType.IMG,
+                      btnColor: AppColors.white,
+                      borderColor: AppColors.kgrey300,
+                      btnContent:
+                          const ImageViewer(imagePath: AppAsset.appleLogo),
+                    )
+                  ],
+                ),
+                AppDimentions.verticalSpace(AppDimentions.k26 * 3),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text.rich(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.20000000298023224,
+                        color: AppColors.kgrey500),
+                    textAlign: TextAlign.center,
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Already have an account? ',
+                        ),
+                        TextSpan(
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.20000000298023224,
+                                    color: AppColors.kprimary),
+                            text: 'Sign In',
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                String? previousUserPin =
+                                    LocalStorageService.getString(
+                                        Constants.securePin(
+                                            User.getPresentUser()?.email));
+                                String? userBearerToken =
+                                    LocalStorageService.getString(
+                                        Constants.bearerToken);
+
+                                User? user = User.getPresentUser();
+                                if (!(previousUserPin.isEmpty &&
+                                    userBearerToken.isEmpty &&
+                                    user != null)) {
+                                  Go(context).toAndReplaceAllNamedRoute(
+                                      routeName:
+                                          SignInWithPincodeView.routeName);
+                                } else {
+                                  Go(context)
+                                      .to(routeName: SigninView.routeName);
+                                }
+                              }),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

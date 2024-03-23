@@ -1,22 +1,29 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bloc/index.dart';
 import 'package:meta/meta.dart';
+import 'package:smart_pay_by_apex/src/logic/services/local_storage_service.dart';
+import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/get_token_bloc/index.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/get_token_payload.dart';
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/get_token_response.dart';
+import 'package:smart_pay_by_apex/src/views/utils/constants.dart';
 import 'package:smart_pay_by_apex/src/views/utils/enums.dart';
 
 import '../../../../../logic/logger/logger.dart';
 import '../../../../../repositories/auth_repository.dart';
-import '../../../../utils/components/app_notifier.dart';
 
 @immutable
 abstract class GetTokenEvent {
   Stream<GetTokenState> applyAsync(
       {GetTokenState currentState, GetTokenBloc bloc});
+
+  static setToken(String token, String email) {
+    LocalStorageService.setString(Constants.secureToken(email), token);
+  }
+
+  static getToken(String email) {
+    return LocalStorageService.getString(Constants.secureToken(email));
+  }
 }
 
 class UnGetTokenEvent extends GetTokenEvent {
@@ -52,8 +59,7 @@ class LoadGetTokenEvent extends GetTokenEvent {
         // if (demoResponse['message'] == 'success') {
         var val = GetTokenResponse.fromJson(res.$1!);
         // var val = GetTokenResponse.fromJson(demoResponse);
-        AppNotifier.notifyAction(getTokenPayload.context,
-            message: 'Token: ${val.data!.token!}');
+        GetTokenEvent.setToken(val.data!.token!, getTokenPayload.email!);
         yield LoadedGetTokenState(val);
       } else {
         yield ErrorGetTokenState(res.$3.toString());

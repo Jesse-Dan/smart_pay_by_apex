@@ -9,6 +9,7 @@ import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/model/verify
 import 'package:smart_pay_by_apex/src/views/auth/signup/verify_view/verify_bloc/index.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/app_notifier.dart';
 import 'package:smart_pay_by_apex/src/views/utils/components/numeric_keyboard.dart';
+import 'package:smart_pay_by_apex/src/views/utils/constants.dart';
 
 import '../../../../logic/handler/handlers/error_handler.dart';
 import '../../../utils/app_dimentions.dart';
@@ -90,6 +91,17 @@ class _VerifyViewState extends State<VerifyView> {
         border: Border.all(color: AppColors.alertError),
       ),
     );
+
+    /// Sorry about this impl i had no time
+    Timer(Constants.tokenDuration, () {
+      var token = GetTokenEvent.getToken(widget.email!);
+      if (token == null) {
+        AppNotifier.notifyAction(context,
+            message: 'An error occured. Click on Recent Code');
+      }
+      AppNotifier.notifyAction(context,
+          message: 'Token: ${GetTokenEvent.getToken(widget.email!)}');
+    });
 
     super.initState();
   }
@@ -233,7 +245,21 @@ class _VerifyViewState extends State<VerifyView> {
 
                             getTokenBloc.add(LoadGetTokenEvent(
                                 getTokenPayload: GetTokenPayload(
-                                    email: widget.email, context: context)));
+                              email: widget.email,
+                            )));
+
+                            /// Sorry about this impl i had no time
+                            Timer(Constants.tokenDuration, () {
+                              var token = GetTokenEvent.getToken(widget.email!);
+                              if (token == null) {
+                                AppNotifier.notifyAction(context,
+                                    message:
+                                        'An error occured. Click on Recent Code');
+                              }
+                              AppNotifier.notifyAction(context,
+                                  message:
+                                      'Token: ${GetTokenEvent.getToken(widget.email!)}');
+                            });
                           },
                           child: Text(
                             'Resend Code in $_timerCount ${_timerCount <= 1 ? 'sec' : 'secs'} ',
