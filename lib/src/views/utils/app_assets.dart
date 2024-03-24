@@ -24,7 +24,7 @@ abstract class AppAsset {
 
   // NUMERIC KEYBOARD ICONS
   static const backSpace = 'assets/icons/png/back-space.png';
-  static const astericsIcon = 'assets/icons/png/*.png';
+  static const astericsIcon = 'assets/icons/png/asterics.png';
 
   // COUNTRIES FLAGS
   static const usFlag = 'assets/images/png/US.png';
